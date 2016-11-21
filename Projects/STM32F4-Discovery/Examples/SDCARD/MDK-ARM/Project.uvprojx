@@ -174,11 +174,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4107</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -414,7 +414,7 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Drivers/BSP/STM324x9I_EVAL</GroupName>
+          <GroupName>Drivers/BSP/STM32F4_DISCO</GroupName>
           <Files>
             <File>
               <FileName>stm32f4_discovery.c</FileName>
@@ -425,6 +425,11 @@
               <FileName>stm32f4_discovery_sd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\stm32f4_discovery_sd.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4_discovery_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\stm32f4_discovery_misc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -460,6 +465,11 @@
               <FileName>stm32f4xx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\stm32f4xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\stm32f4xx_hal_msp.c</FilePath>
             </File>
           </Files>
         </Group>

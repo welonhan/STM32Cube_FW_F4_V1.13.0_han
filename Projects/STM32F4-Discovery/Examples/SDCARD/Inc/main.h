@@ -51,8 +51,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-/* EVAL includes component */
-#include "stm32f4_discovery.h"    //hanwl
+/* discovery includes component */
+#include "stm32f4_discovery.h"    			//hanwl
+#include "stm32f4_discovery_misc.h"    	//hanwl
 
 /* FatFs includes component */
 #include "ff_gen_drv.h"
