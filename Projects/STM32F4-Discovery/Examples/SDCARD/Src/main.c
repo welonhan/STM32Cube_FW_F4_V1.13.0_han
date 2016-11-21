@@ -48,8 +48,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-#include <stdio.h>
-
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -90,10 +88,6 @@ int main(void)
   /* Configure LED1 and LED3 */
   BSP_LED_Init(LED4);
   BSP_LED_Init(LED3);
-	
-	BSP_UART2_Init();
-	
-	printf("UART test!\n\r");
   
   /*##-1- Link the micro SD disk I/O driver ##################################*/
   if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
@@ -267,8 +261,6 @@ static void Error_Handler(void)
 }
 
 #ifdef  USE_FULL_ASSERT
-
-
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -287,14 +279,5 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
-
-int fputc(int ch, FILE *f)
-{
-	USART2->DR = ((uint8_t)ch & (uint16_t)0x01FF);
-	while (!(USART2->SR & USART_SR_TXE));
-	return (ch);
-}
-
-
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
