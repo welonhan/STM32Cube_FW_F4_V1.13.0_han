@@ -47,7 +47,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\STM32407\</OutputDirectory>
+          <OutputDirectory>..\..\..\..\..\..\stm32_out\</OutputDirectory>
           <OutputName>STM32407</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
@@ -174,11 +174,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4107</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -414,17 +414,12 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Drivers/BSP/STM324x9I_EVAL</GroupName>
+          <GroupName>Drivers/BSP/STM32F4_DISCO</GroupName>
           <Files>
             <File>
               <FileName>stm32f4_discovery.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\Drivers\BSP\STM32F4-Discovery\stm32f4_discovery.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4_discovery_sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\stm32f4_discovery_sd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -460,6 +455,11 @@
               <FileName>stm32f4xx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\stm32f4xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\stm32f4xx_hal_msp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -840,6 +840,31 @@
               <FileName>readme.txt</FileName>
               <FileType>5</FileType>
               <FilePath>..\readme.txt</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/BSP/LCD_TP_SD_UART</GroupName>
+          <Files>
+            <File>
+              <FileName>stm32f4_discovery_sd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\stm32f4_discovery_sd.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4_discovery_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\stm32f4_discovery_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4_discovery_touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\stm32f4_discovery_touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4_discovery_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\stm32f4_discovery_uart.c</FilePath>
             </File>
           </Files>
         </Group>

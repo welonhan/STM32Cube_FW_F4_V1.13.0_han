@@ -119,8 +119,8 @@
 /** @defgroup STM324x9I_EVAL_SD_Private_Variables STM324x9I EVAL SD Private Variables
   * @{
   */
-static SD_HandleTypeDef uSdHandle;
-static SD_CardInfo uSdCardInfo;
+extern SD_HandleTypeDef uSdHandle;
+extern SD_CardInfo uSdCardInfo;
 /**
   * @}
   */ 
@@ -458,12 +458,17 @@ static void SD_MspInit(void)
   HAL_DMA_Init(&dmaTxHandle); 
   
   /* NVIC configuration for DMA transfer complete interrupt */
-  HAL_NVIC_SetPriority(SD_DMAx_Rx_IRQn, 6, 0);
+  HAL_NVIC_SetPriority(SD_DMAx_Rx_IRQn, 0, 5);
   HAL_NVIC_EnableIRQ(SD_DMAx_Rx_IRQn);
   
   /* NVIC configuration for DMA transfer complete interrupt */
-  HAL_NVIC_SetPriority(SD_DMAx_Tx_IRQn, 6, 0);
+  HAL_NVIC_SetPriority(SD_DMAx_Tx_IRQn, 0, 4);
   HAL_NVIC_EnableIRQ(SD_DMAx_Tx_IRQn);
+	
+	/* NVIC configuration for SDIO interrupt */
+  HAL_NVIC_SetPriority(SDIO_IRQn, 0, 6);
+  HAL_NVIC_EnableIRQ(SD_DMAx_Tx_IRQn);
+	
 }
 
 /**

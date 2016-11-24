@@ -53,6 +53,11 @@ void SysTick_Handler(void);
 void DMA2_Stream3_IRQHandler(void);
 void DMA2_Stream6_IRQHandler(void);
 void SDIO_IRQHandler(void);
+void I2Cx_EV_IRQHandler(void);
+void I2Cx_ER_IRQHandler(void);
+void USARTx_DMA_RX_IRQHandler(void);
+void USARTx_DMA_TX_IRQHandler(void);
+void USARTx_IRQHandler(void);
 #ifdef __cplusplus
 }
 #endif

@@ -28,8 +28,11 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
 #include "stm32f4xx_it.h" 
+#include "stm32f4_discovery_sd.h"
+
+extern UART_HandleTypeDef UartHandle;
+extern I2C_HandleTypeDef I2cHandle;
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -176,6 +179,61 @@ void SDIO_IRQHandler(void)
 {
   BSP_SD_IRQHandler();
 }
+
+/**
+  * @brief  This function handles I2C event interrupt request.  
+  * @param  None
+  * @retval None
+  * @Note   This function is redefined in "main.h" and related to I2C data transmission     
+  */
+
+void I2Cx_EV_IRQHandler(void)
+{
+  HAL_I2C_EV_IRQHandler(& I2cHandle);
+}
+
+/**
+  * @brief  This function handles I2C error interrupt request.
+  * @param  None
+  * @retval None
+  * @Note   This function is redefined in "main.h" and related to I2C error
+  */
+void I2Cx_ER_IRQHandler(void)
+{
+  HAL_I2C_ER_IRQHandler(& I2cHandle);
+}
+
+/**
+  * @brief  This function handles DMA RX interrupt request.  
+  * @param  None
+  * @retval None   
+  */
+void USARTx_DMA_RX_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(UartHandle.hdmarx);
+}
+
+/**
+  * @brief  This function handles DMA TX interrupt request.
+  * @param  None
+  * @retval None   
+  */
+void USARTx_DMA_TX_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(UartHandle.hdmatx);
+}
+
+/**
+  * @brief  This function handles USARTx interrupt request.
+  * @param  None
+  * @retval None
+  */
+void USARTx_IRQHandler(void)
+{
+  HAL_UART_IRQHandler(&UartHandle);
+}
+
+
 
 /**
   * @brief  This function handles PPP interrupt request.

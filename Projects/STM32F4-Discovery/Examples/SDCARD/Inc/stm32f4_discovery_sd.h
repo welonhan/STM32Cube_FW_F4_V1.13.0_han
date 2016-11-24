@@ -37,8 +37,8 @@
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM324x9I_EVAL_SD_H
-#define __STM324x9I_EVAL_SD_H
+#ifndef __STM32F4_DISCOVERY_SD_H
+#define __STM32F4_DISCOVERY_SD_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -147,6 +147,6 @@ uint8_t BSP_SD_IsDetected(void);
 }
 #endif
 
-#endif /* __STM324x9I_EVAL_SD_H */
+#endif /* __STM32F4_DISCOVERY_SD_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -47,6 +47,24 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32f4_discovery_lcd.h"
+#include "stm32f4_discovery_uart.h"
+#include "stm32f4_discovery_touch.h"
+#include "stm32f4_discovery_sd.h"
+
+/* FatFs includes component */
+#include "ff_gen_drv.h"
+#include "sd_diskio.h"
+
+#include <stdio.h>
+
+I2C_HandleTypeDef I2cHandle;
+
+UART_HandleTypeDef UartHandle;
+__IO ITStatus UartReady = RESET;
+
+SD_HandleTypeDef uSdHandle;
+SD_CardInfo uSdCardInfo;
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -55,6 +73,7 @@
 FATFS SDFatFs;  /* File system object for SD card logical drive */
 FIL MyFile;     /* File object */
 char SDPath[4]; /* SD card logical drive path */
+
 
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
@@ -81,13 +100,23 @@ int main(void)
        - Global MSP (MCU Support Package) initialization
      */
   HAL_Init();
+	
+	//0 bits for preemption priority
+  //4 bits for subpriority
+	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);
   
-  /* Configure the system clock to 175 MHz */
+  /* Configure the system clock to 168 MHz */
   SystemClock_Config();
   
   /* Configure LED1 and LED3 */
   BSP_LED_Init(LED4);
   BSP_LED_Init(LED3);
+	
+	BSP_UART2_Init();	
+	printf("UART2 init ok!\n\r");
+	
+	BSP_LCD_Init();
+	printf("LCD init ok!\n\r");
   
   /*##-1- Link the micro SD disk I/O driver ##################################*/
   if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
@@ -261,6 +290,8 @@ static void Error_Handler(void)
 }
 
 #ifdef  USE_FULL_ASSERT
+
+
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -279,5 +310,14 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
+
+int fputc(int ch, FILE *f)
+{
+	USART2->DR = ((uint8_t)ch & (uint16_t)0x01FF);
+	while (!(USART2->SR & USART_SR_TXE));
+	return (ch);
+}
+
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
