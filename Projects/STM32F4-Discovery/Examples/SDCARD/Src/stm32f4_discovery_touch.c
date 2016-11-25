@@ -1,23 +1,19 @@
-#ifdef  use_capacitive_touch_panel
 #include  "stm32f4_discovery_touch.h"
+#include "stm32f4_discovery_lcd.h"
 
-I2C_HandleTypeDef I2cHandle;
-
-void GUI_TOUCH_X_ActivateX(void) {}
-void GUI_TOUCH_X_ActivateY(void) {}
-
-volatile u8 keyId = 0;
+extern I2C_HandleTypeDef I2cHandle;
+extern TOUCH_XY_Typedef TOUCH_Dat;
+//volatile u8 keyId = 0;
 	
 
 	
-//*************************************************
-//???? : void Touch_GPIO_Config(void)  
-//???? : ?????IIC??,??????????IIC??
-//???? : 
-//???? : 
-//???  : 
-//*************************************************
-void TOUCH_GPIO_Config(void) 
+/*************************************************
+* Function Name  : BSP_LCD_Init
+* Description    : Init I2C, INT, RESET GPIO
+* Parameter      : 	
+* Return         : 
+**************************************************/
+void BSP_TOUCH_Init(void) 
 {
 	GPIO_InitTypeDef  GPIO_InitStruct;
  	//I2C_HandleTypeDef I2cHandle;
@@ -25,17 +21,23 @@ void TOUCH_GPIO_Config(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
   
   /* Touch pin configuration */
-	GPIO_Init_Structure.Mode      = GPIO_MODE_INPUT_PP;
-  GPIO_Init_Structure.Pull      = GPIO_PULLUP;
-  GPIO_Init_Structure.Speed     = GPIO_SPEED_HIGH;
+	GPIO_InitStruct.Mode 			= GPIO_MODE_IT_FALLING; 
+  GPIO_InitStruct.Pull      = GPIO_PULLUP;
+  GPIO_InitStruct.Speed     = GPIO_SPEED_LOW;
     
   //TOUCH INT--------------PB7										 
-  GPIO_Init_Structure.Pin   = GPIO_PIN_7  ;   
-  HAL_GPIO_Init(GPIOA, &GPIO_Init_Structure);
+  GPIO_InitStruct.Pin   = GPIO_PIN_7  ;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+   
+  /* Enable and set Button EXTI Interrupt to the lowest priority */
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 7);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+  	
 	
 	//TOUCH RESET------------PB8
-  GPIO_Init_Structure.Pin   = GPIO_PIN_8  ;   
-  HAL_GPIO_Init(GPIOA, &GPIO_Init_Structure);   
+	GPIO_InitStruct.Mode 	= GPIO_MODE_OUTPUT_PP; 
+  GPIO_InitStruct.Pin   = GPIO_PIN_8  ;   
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);   
   
    /*##-1- Configure the I2C peripheral ######################################*/
   I2cHandle.Instance             = I2Cx;
@@ -52,7 +54,8 @@ void TOUCH_GPIO_Config(void)
   if(HAL_I2C_Init(&I2cHandle) != HAL_OK)
   {
     /* Initialization Error */
-    Error_Handler();    
+    //Error_Handler();   
+		printf("touch init fail\n\r");
   }
   
   /* RESET THE TOUCH */
@@ -61,45 +64,134 @@ void TOUCH_GPIO_Config(void)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);				//TOUCH RESET=1	
 }
 	
-
-
-void EXTI4_IRQHandler(void)
+/*******************************************************************************
+* Function Name  : FT6206_Read_Reg
+* Description    : Read The FT6206
+* Parameter      : startaddr: First address
+*	pbuf	 				 : The Pointer Point to a buffer
+*	len						 : The length of the read Data 
+* Return         : 1:Fail; 0:Success
+*******************************************************************************/
+uint8_t FT6206_Read_Reg(uint8_t *pbuf,uint32_t len)
 {
-	if(EXTI_GetITStatus(EXTI_Line4) != RESET)
+	if(HAL_I2C_Master_Receive_IT(&I2cHandle, FT6206_ADDR, pbuf, len) !=HAL_OK)
 	{
-		EXTI->PR = EXTI_Line4;  				// ??????
-    keyId = 1;
+		printf("FT6206_Read_Reg\n\r");
+		return 1;
 	}
+	return 0;
 }
+
+static uint8_t CheckSum(uint8_t *buf)
+{
+	__IO uint8_t i;
+	__IO uint16_t sum = 0;
+
+	for(i=0;i<7;i++)
+	{
+		sum += buf[i];		
+	}
+
+	sum &= 0xff;
+	sum = 0x0100-sum;
+	sum &= 0xff;
+
+	return (sum == buf[7]);
+}
+
+/*******************************************************************************
+* Function Name  : FT6206_Read_Data
+* Description    : Read The FT6206
+* Parameter      : CTP_Dat: 
+* Return         : 1:Fail; 0:Success
+*******************************************************************************/
+
+uint8_t BSP_TOUCH_Read(TOUCH_XY_Typedef CTP_Dat)
+{
+	__IO uint16_t DCX = 0,DCY = 0;
 	
+	TOUCH_DATA_Typedef TpdTouchData;
+	//TOUCH_XY_Typedef CTP_Dat;
+	//memset((uint8_t*)&TpdTouchData,0,sizeof(TpdTouchData));
+	
+	if(FT6206_Read_Reg((uint8_t*)&TpdTouchData, sizeof(TpdTouchData)))
+	{
+	//		printf("FT6206 Read Fail!\r\n");
+		return 0;
+	}
+	
+	//Check The ID of FT6206
+	if(TpdTouchData.packet_id != 0x52)	
+	{
+	//		printf("The ID of FT6206 is False!\r\n");
+		return 0;	
+	}		
+	
+	//CheckSum
+	if(!CheckSum((uint8_t*)(&TpdTouchData)))
+	{
+	//		printf("Checksum is False!\r\n");
+		return 0;
+	}
+	
+	//The Key Of TP		
+	if(TpdTouchData.xh_yh == 0xff && TpdTouchData.xl == 0xff
+		&& TpdTouchData.yl == 0xff && TpdTouchData.dxh_dyh == 0xff && TpdTouchData.dyl == 0xff)
+	{
+		/*switch(TpdTouchData.dxl)
+		{
+			case 0:	return 0;
+			case 1: printf("R-KEY\r\n"); break;	 //Right Key
+			case 2: printf("M-KEY\r\n"); break;	 //Middle Key
+			case 4: printf("L-KEY\r\n"); break;	 //Left Key
+			default:;
+		}*/		
+	}
+	else 
+	{
+		//The First Touch Point
+		CTP_Dat.cx1 = (TpdTouchData.xh_yh&0xf0)<<4 | TpdTouchData.xl;
+		CTP_Dat.cy1 = (TpdTouchData.xh_yh&0x0f)<<8 | TpdTouchData.yl;
 
+		//The Second Touch Point
+		if(TpdTouchData.dxh_dyh != 0 || TpdTouchData.dxl != 0 || TpdTouchData.dyl != 0)
+		{	
+			DCX = (TpdTouchData.dxh_dyh&0xf0)<<4 | TpdTouchData.dxl;
+			DCY = (TpdTouchData.dxh_dyh&0x0f)<<8 | TpdTouchData.dyl;
 
-/****************************************************************************************
-																	??? FT6336????
+			DCX <<= 4;
+			DCX >>= 4;
+			DCY <<= 4;
+			DCY >>= 4;
 
-***************************************************************************************/
-typedef struct
+			if(DCX >= 2048)
+				DCX -= 4096;
+			if(DCY >= 2048)
+				DCY -= 4096;
+
+			CTP_Dat.cx2 = CTP_Dat.cx1 + DCX;
+			CTP_Dat.cy2 = CTP_Dat.cy1 + DCY;
+		}		
+	}
+
+	if(CTP_Dat.cx1 == 0 && CTP_Dat.cy1 == 0 && CTP_Dat.cx2 == 0 && CTP_Dat.cy2 == 0)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+void BSP_TOUCH_Test(void)
 {
-	uint16_t cx1; //CTP_X1
-	uint16_t cy1; //CTP_Y1
-	uint16_t cx2; //CTP_X2
-	uint16_t cy2; //CTP_Y2
-}CTP_Stru;
+	if((TOUCH_Dat.cx1<=800)&&(TOUCH_Dat.cy1<=480))
+	{
+		BSP_LCD_DrawPixel(TOUCH_Dat.cx1, TOUCH_Dat.cy1, WHITE);
+	}
+	else
+		printf("touch test fail\n\r");
+}
 
-CTP_Stru	CTP_Dat;
-
-typedef struct 
-{
-	uint8_t packet_id;
-	uint8_t xh_yh;
-	uint8_t xl;
-	uint8_t yl;
-	uint8_t dxh_dyh;
-	uint8_t dxl;
-	uint8_t dyl;
-  uint8_t checksum;
-}TpdTouchData;
-
+#if 0
 static uint8_t FT6206_Write_Reg(uint8_t startaddr,uint8_t *pbuf,uint32_t len)
 {
 	for(i=0;i<len;i++,pbuf++)
@@ -134,35 +226,6 @@ void FT6206_Read_RegN(u8 *pbuf,u8 len)
 	}		
 	I2C1_Stop();
 }
-
-uint8_t FT6206_Read_Reg(uint8_t *pbuf,uint32_t len)
-{
-	
-	int8_t i=0;
-
-	I2C1_Start();
-	I2C1_Send_Byte(FT6206_ADDR);
-	I2C1_WaitAck();	
-	
-	I2C1_Send_Byte(0);
-	I2C1_WaitAck();	
-  I2C1_Stop();
-  
-	I2C1_Start();
-	I2C1_Send_Byte(FT6206_ADDR+1);
-	I2C1_WaitAck();	
-	
-	for(i=0;i<len;i++)
-	{
-		if(i==(len-1))  *(pbuf+i)=I2C1_Read_Byte(0);
-		else            *(pbuf+i)=I2C1_Read_Byte(1);
-	}		
-	I2C1_Stop();
-  
-	return 0;
-}
-
-
 /*******************************************************************************
 * Function Name  : FT6206_Read_Reg
 * Description    : Read The FT6206
@@ -229,115 +292,7 @@ uint8_t FT6206_Read_Reg0(uint8_t startaddr,uint8_t *pbuf,uint32_t len)
 	return 0;	 
 }
 
-static uint8_t CheckSum(uint8_t *buf)
-{
-	__IO uint8_t i;
-	__IO uint16_t sum = 0;
 
-	for(i=0;i<7;i++)
-	{
-		sum += buf[i];		
-	}
-
-	sum &= 0xff;
-	sum = 0x0100-sum;
-	sum &= 0xff;
-
-	return (sum == buf[7]);
-}
-
-/*******************************************************************************
-* Function Name  : FT6206_Read_Data
-* Description    : Read The FT6206
-* Parameter      : startaddr: First address
-*	pbuf	 				 : The Pointer Point to a buffer
-*	len						 : The length of the read Data 
-* Return         : 1:Fail; 0:Success
-*******************************************************************************/
-
-uint8_t CTP_Read(uint8_t flag)
-{
-	__IO uint16_t DCX = 0,DCY = 0;
-	
-	TpdTouchData TpdTouchData;
-
-	//memset((uint8_t*)&TpdTouchData,0,sizeof(TpdTouchData));
-
-	//Read the FT6206
-
-	
-	if(FT6206_Read_Reg((uint8_t*)&TpdTouchData, sizeof(TpdTouchData)))
-	{
-//		printf("FT6206 Read Fail!\r\n");
-		return 0;
-	}
-	
-	//Check The ID of FT6206
-	if(TpdTouchData.packet_id != 0x52)	
-	{
-//		printf("The ID of FT6206 is False!\r\n");
-		return 0;	
-	}		
-	
-	//CheckSum
-	if(!CheckSum((uint8_t*)(&TpdTouchData)))
-	{
-//		printf("Checksum is False!\r\n");
-		return 0;
-	}
-	
-	//The Key Of TP		
-	if(TpdTouchData.xh_yh == 0xff && TpdTouchData.xl == 0xff
-		&& TpdTouchData.yl == 0xff && TpdTouchData.dxh_dyh == 0xff && TpdTouchData.dyl == 0xff)
-	{
-		/*switch(TpdTouchData.dxl)
-		{
-			case 0:	return 0;
-			case 1: printf("R-KEY\r\n"); break;	 //Right Key
-			case 2: printf("M-KEY\r\n"); break;	 //Middle Key
-			case 4: printf("L-KEY\r\n"); break;	 //Left Key
-			default:;
-		}*/		
-	}
-	else 
-	{
-		//The First Touch Point
-		CTP_Dat.cx1 = (TpdTouchData.xh_yh&0xf0)<<4 | TpdTouchData.xl;
-		CTP_Dat.cy1 = (TpdTouchData.xh_yh&0x0f)<<8 | TpdTouchData.yl;
-
-		//The Second Touch Point
-		if(TpdTouchData.dxh_dyh != 0 || TpdTouchData.dxl != 0 || TpdTouchData.dyl != 0)
-		{	
-			DCX = (TpdTouchData.dxh_dyh&0xf0)<<4 | TpdTouchData.dxl;
-			DCY = (TpdTouchData.dxh_dyh&0x0f)<<8 | TpdTouchData.dyl;
-
-			DCX <<= 4;
-			DCX >>= 4;
-			DCY <<= 4;
-			DCY >>= 4;
-
-			if(DCX >= 2048)
-				DCX -= 4096;
-			if(DCY >= 2048)
-				DCY -= 4096;
-
-			CTP_Dat.cx2 = CTP_Dat.cx1 + DCX;
-			CTP_Dat.cy2 = CTP_Dat.cy1 + DCY;
-		}		
-	}
-
-	if(CTP_Dat.cx1 == 0 && CTP_Dat.cy1 == 0 && CTP_Dat.cx2 == 0 && CTP_Dat.cy2 == 0)
-	{
-		return 0;
-	}
-	
-//	if(flag)
-//	{	
-//		printf("#CP%04d,%04d!%04d,%04d;%04d,%04d\r\n",0,0,CTP_Dat.cx1,CTP_Dat.cy1,CTP_Dat.cx2,CTP_Dat.cy2);
-//		memset((uint8_t*)&CTP_Dat, 0, sizeof(CTP_Dat));
-//	}
-	return 1;
-}
 
 u8 a,buf[10];
 volatile static u16 touchX=0,touchY=0,lastY=0;
@@ -415,5 +370,6 @@ void Touch_Test(void)
 
 	}
 }
+
 
 #endif

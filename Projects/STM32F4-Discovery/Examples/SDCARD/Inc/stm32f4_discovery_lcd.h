@@ -33,6 +33,7 @@
 #define Bank1_LCD_C    ((uint32_t)0x60000000)	   //Disp Reg ADDR
 
 void BSP_LCD_Init(void);
+void BSP_LCD_DrawPixel(uint16_t x, uint16_t y, int Color);
 
 
 #endif

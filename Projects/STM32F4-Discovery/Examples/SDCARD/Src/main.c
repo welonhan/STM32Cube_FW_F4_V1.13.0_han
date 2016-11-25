@@ -66,6 +66,8 @@ __IO ITStatus UartReady = RESET;
 SD_HandleTypeDef uSdHandle;
 SD_CardInfo uSdCardInfo;
 
+TOUCH_XY_Typedef TOUCH_Dat;
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -117,6 +119,12 @@ int main(void)
 	
 	BSP_LCD_Init();
 	printf("LCD init ok!\n\r");
+	
+	while(1)
+	{
+		BSP_TOUCH_Test();
+		HAL_Delay(500);
+	}
   
   /*##-1- Link the micro SD disk I/O driver ##################################*/
   if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
@@ -275,6 +283,19 @@ static void SystemClock_Config(void)
   }
 }
 
+/**
+  * @brief EXTI line detection callbacks
+  * @param GPIO_Pin: Specifies the pins connected EXTI line
+  * @retval None
+  */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if(GPIO_Pin == GPIO_PIN_7)										//PB7 TOUCH INT
+  {
+    BSP_TOUCH_Read(TOUCH_Dat);										//Read the touch	
+		BSP_LED_Toggle(LED4);
+  }
+}
 /**
   * @brief  This function is executed in case of error occurrence.
   * @param  None

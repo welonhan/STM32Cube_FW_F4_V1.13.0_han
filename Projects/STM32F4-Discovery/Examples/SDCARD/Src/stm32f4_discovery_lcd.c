@@ -640,7 +640,7 @@ void LCD_Fill_Pic(uint16_t x, uint16_t y,uint16_t pic_H, uint16_t pic_V, const u
 }
 
 //在指定座标上打一个点
-void DrawPixel(uint16_t x, uint16_t y, int Color)
+void BSP_LCD_DrawPixel(uint16_t x, uint16_t y, int Color)
 {
 	BlockWrite(x,x,y,y);
 
