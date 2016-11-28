@@ -74,9 +74,9 @@ void BSP_TOUCH_Init(void)
 *******************************************************************************/
 uint8_t FT6206_Read_Reg(uint8_t *pbuf,uint32_t len)
 {
-	if(HAL_I2C_Master_Receive_IT(&I2cHandle, FT6206_ADDR, pbuf, len) !=HAL_OK)
+	if(HAL_I2C_Mem_Read_IT(&I2cHandle, FT6206_ADDR, 0, I2C_MEMADD_SIZE_8BIT,pbuf, len) !=HAL_OK)
 	{
-		printf("FT6206_Read_Reg\n\r");
+		printf("FT6206_Read_Reg error\n\r");
 		return 1;
 	}
 	return 0;
@@ -117,21 +117,21 @@ uint8_t BSP_TOUCH_Read(TOUCH_XY_Typedef CTP_Dat)
 	if(FT6206_Read_Reg((uint8_t*)&TpdTouchData, sizeof(TpdTouchData)))
 	{
 	//		printf("FT6206 Read Fail!\r\n");
-		return 0;
+		return 1;
 	}
 	
 	//Check The ID of FT6206
 	if(TpdTouchData.packet_id != 0x52)	
 	{
 	//		printf("The ID of FT6206 is False!\r\n");
-		return 0;	
+		return 1;	
 	}		
 	
 	//CheckSum
 	if(!CheckSum((uint8_t*)(&TpdTouchData)))
 	{
 	//		printf("Checksum is False!\r\n");
-		return 0;
+		return 1;
 	}
 	
 	//The Key Of TP		

@@ -240,10 +240,18 @@ void USARTx_IRQHandler(void)
   */
 void EXTI9_5_IRQHandler(void)
 {
-  HAL_GPIO_EXTI_IRQHandler(KEY_BUTTON_PIN);
+  HAL_GPIO_EXTI_IRQHandler(TOUCH_INT_PIN);
 }
 
-
+/**
+  * @brief  This function handles External line 0 interrupt request.
+  * @param  None
+  * @retval None
+  */
+void EXTI0_IRQHandler(void)
+{
+  HAL_GPIO_EXTI_IRQHandler(KEY_BUTTON_PIN);
+}
 /**
   * @brief  This function handles PPP interrupt request.
   * @param  None

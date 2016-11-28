@@ -114,6 +114,8 @@ int main(void)
   BSP_LED_Init(LED4);
   BSP_LED_Init(LED3);
 	
+	BSP_PB_Init(BUTTON_KEY,BUTTON_MODE_EXTI);
+	
 	BSP_UART2_Init();	
 	printf("UART2 init ok!\n\r");
 	
@@ -122,8 +124,8 @@ int main(void)
 	
 	while(1)
 	{
-		BSP_TOUCH_Test();
-		HAL_Delay(500);
+		//BSP_TOUCH_Test();
+		//HAL_Delay(500);
 	}
   
   /*##-1- Link the micro SD disk I/O driver ##################################*/
@@ -290,10 +292,15 @@ static void SystemClock_Config(void)
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if(GPIO_Pin == GPIO_PIN_7)										//PB7 TOUCH INT
+  if(GPIO_Pin == TOUCH_INT_PIN)										//PB7 TOUCH INT
   {
-    BSP_TOUCH_Read(TOUCH_Dat);										//Read the touch	
+    if(BSP_TOUCH_Read(TOUCH_Dat))									//Read the touch
+			BSP_LED_Toggle(LED3);											
 		BSP_LED_Toggle(LED4);
+  }
+	if(GPIO_Pin == KEY_BUTTON_PIN)										//PA0 TOUCH INT
+  {
+    BSP_LED_Toggle(LED3);
   }
 }
 /**

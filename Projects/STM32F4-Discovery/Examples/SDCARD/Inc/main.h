@@ -127,7 +127,7 @@
 #define I2Cx_ER_IRQn                    I2C1_ER_IRQn
 #define I2Cx_ER_IRQHandler              I2C1_ER_IRQHandler
 
-
+#define TOUCH_INT_PIN                		GPIO_PIN_7
 
 
 /* Exported constants --------------------------------------------------------*/
