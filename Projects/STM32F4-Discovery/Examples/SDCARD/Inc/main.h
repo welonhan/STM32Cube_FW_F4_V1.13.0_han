@@ -130,6 +130,7 @@
 #define TOUCH_INT_PIN                		GPIO_PIN_7
 
 
+
 /* Exported constants --------------------------------------------------------*/
 #define SRAM_BANK_ADDR                 ((uint32_t)0x64000000)
 

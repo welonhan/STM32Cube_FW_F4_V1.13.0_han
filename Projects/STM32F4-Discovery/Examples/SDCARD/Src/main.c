@@ -122,6 +122,8 @@ int main(void)
 	BSP_LCD_Init();
 	printf("LCD init ok!\n\r");
 	
+	BSP_TOUCH_Init();
+	
 	while(1)
 	{
 		//BSP_TOUCH_Test();
@@ -294,11 +296,16 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   if(GPIO_Pin == TOUCH_INT_PIN)										//PB7 TOUCH INT
   {
-    if(BSP_TOUCH_Read(TOUCH_Dat))									//Read the touch
-			BSP_LED_Toggle(LED3);											
-		BSP_LED_Toggle(LED4);
+    if(BSP_TOUCH_Read(TOUCH_Dat)==0)
+		{	BSP_LCD_DrawPixel(TOUCH_Dat.x, TOUCH_Dat.y, RED);
+			BSP_LCD_DrawPixel(TOUCH_Dat.x, TOUCH_Dat.y+1, RED);
+			BSP_LCD_DrawPixel(TOUCH_Dat.x+1, TOUCH_Dat.y, RED);
+			BSP_LCD_DrawPixel(TOUCH_Dat.x+1, TOUCH_Dat.y, RED);
+		}
+			BSP_LED_Toggle(LED4);
   }
-	if(GPIO_Pin == KEY_BUTTON_PIN)										//PA0 TOUCH INT
+	
+	if(GPIO_Pin == KEY_BUTTON_PIN)									//PA0 KEY INT
   {
     BSP_LED_Toggle(LED3);
   }

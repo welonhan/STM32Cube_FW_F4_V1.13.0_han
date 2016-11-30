@@ -5,22 +5,19 @@
 
 typedef struct
 {
-	uint16_t cx1; //CTP_X1
-	uint16_t cy1; //CTP_Y1
-	uint16_t cx2; //CTP_X2
-	uint16_t cy2; //CTP_Y2
+	uint16_t x; //CTP_X1
+	uint16_t y; //CTP_Y1
 }TOUCH_XY_Typedef;
 
 typedef struct 
 {
 	uint8_t packet_id;
-	uint8_t xh_yh;				//
-	uint8_t xl;						//
+	uint8_t points;				//
+	uint8_t key;
+	uint8_t xh;						//
+	uint8_t xl;
+	uint8_t yh;
 	uint8_t yl;
-	uint8_t dxh_dyh;
-	uint8_t dxl;
-	uint8_t dyl;
-  uint8_t checksum;
 }TOUCH_DATA_Typedef;
 					
 #define FT6206_ADDR		0x70

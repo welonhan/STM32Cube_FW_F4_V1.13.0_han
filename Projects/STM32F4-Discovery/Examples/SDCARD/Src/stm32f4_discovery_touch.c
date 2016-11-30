@@ -74,7 +74,10 @@ void BSP_TOUCH_Init(void)
 *******************************************************************************/
 uint8_t FT6206_Read_Reg(uint8_t *pbuf,uint32_t len)
 {
-	if(HAL_I2C_Mem_Read_IT(&I2cHandle, FT6206_ADDR, 0, I2C_MEMADD_SIZE_8BIT,pbuf, len) !=HAL_OK)
+	//HAL_I2C_Mem_Read_IT
+	//uint8_t *p_data_addr=0;
+
+	if(HAL_I2C_Mem_Read(&I2cHandle, FT6206_ADDR, 0,I2C_MEMADD_SIZE_8BIT , pbuf, len, 10000) !=HAL_OK)
 	{
 		printf("FT6206_Read_Reg error\n\r");
 		return 1;
@@ -109,83 +112,29 @@ static uint8_t CheckSum(uint8_t *buf)
 uint8_t BSP_TOUCH_Read(TOUCH_XY_Typedef CTP_Dat)
 {
 	__IO uint16_t DCX = 0,DCY = 0;
-	
-	TOUCH_DATA_Typedef TpdTouchData;
+	uint8_t tp_data[7];
+	//TOUCH_DATA_Typedef TpdTouchData;
 	//TOUCH_XY_Typedef CTP_Dat;
 	//memset((uint8_t*)&TpdTouchData,0,sizeof(TpdTouchData));
 	
-	if(FT6206_Read_Reg((uint8_t*)&TpdTouchData, sizeof(TpdTouchData)))
+	if(FT6206_Read_Reg(tp_data, 7)==0)
 	{
-	//		printf("FT6206 Read Fail!\r\n");
-		return 1;
-	}
-	
-	//Check The ID of FT6206
-	if(TpdTouchData.packet_id != 0x52)	
-	{
-	//		printf("The ID of FT6206 is False!\r\n");
-		return 1;	
-	}		
-	
-	//CheckSum
-	if(!CheckSum((uint8_t*)(&TpdTouchData)))
-	{
-	//		printf("Checksum is False!\r\n");
-		return 1;
-	}
-	
-	//The Key Of TP		
-	if(TpdTouchData.xh_yh == 0xff && TpdTouchData.xl == 0xff
-		&& TpdTouchData.yl == 0xff && TpdTouchData.dxh_dyh == 0xff && TpdTouchData.dyl == 0xff)
-	{
-		/*switch(TpdTouchData.dxl)
+		if ((tp_data[2]&0x0f) == 1)
 		{
-			case 0:	return 0;
-			case 1: printf("R-KEY\r\n"); break;	 //Right Key
-			case 2: printf("M-KEY\r\n"); break;	 //Middle Key
-			case 4: printf("L-KEY\r\n"); break;	 //Left Key
-			default:;
-		}*/		
+			TOUCH_Dat.y = ((uint16_t)(tp_data[3] )& 0x0F)<<8 | (uint16_t)(tp_data[4]);
+			TOUCH_Dat.x = 800-(((uint16_t)(tp_data[5] )& 0x0F)<<8 | (uint16_t)(tp_data[6]));
+			return 0;
+		}
 	}
-	else 
-	{
-		//The First Touch Point
-		CTP_Dat.cx1 = (TpdTouchData.xh_yh&0xf0)<<4 | TpdTouchData.xl;
-		CTP_Dat.cy1 = (TpdTouchData.xh_yh&0x0f)<<8 | TpdTouchData.yl;
-
-		//The Second Touch Point
-		if(TpdTouchData.dxh_dyh != 0 || TpdTouchData.dxl != 0 || TpdTouchData.dyl != 0)
-		{	
-			DCX = (TpdTouchData.dxh_dyh&0xf0)<<4 | TpdTouchData.dxl;
-			DCY = (TpdTouchData.dxh_dyh&0x0f)<<8 | TpdTouchData.dyl;
-
-			DCX <<= 4;
-			DCX >>= 4;
-			DCY <<= 4;
-			DCY >>= 4;
-
-			if(DCX >= 2048)
-				DCX -= 4096;
-			if(DCY >= 2048)
-				DCY -= 4096;
-
-			CTP_Dat.cx2 = CTP_Dat.cx1 + DCX;
-			CTP_Dat.cy2 = CTP_Dat.cy1 + DCY;
-		}		
-	}
-
-	if(CTP_Dat.cx1 == 0 && CTP_Dat.cy1 == 0 && CTP_Dat.cx2 == 0 && CTP_Dat.cy2 == 0)
-	{
-		return 1;
-	}
-	return 0;
+	return 1;
 }
 
 void BSP_TOUCH_Test(void)
 {
-	if((TOUCH_Dat.cx1<=800)&&(TOUCH_Dat.cy1<=480))
+	BSP_TOUCH_Read(TOUCH_Dat);
+	if(BSP_TOUCH_Read(TOUCH_Dat)==0)
 	{
-		BSP_LCD_DrawPixel(TOUCH_Dat.cx1, TOUCH_Dat.cy1, WHITE);
+		BSP_LCD_DrawPixel(TOUCH_Dat.x, TOUCH_Dat.y, WHITE);
 	}
 	else
 		printf("touch test fail\n\r");
