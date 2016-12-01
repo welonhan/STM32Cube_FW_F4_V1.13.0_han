@@ -326,6 +326,37 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef *hi2c)
   HAL_NVIC_DisableIRQ(I2Cx_ER_IRQn);
   HAL_NVIC_DisableIRQ(I2Cx_EV_IRQn);
 }
+
+
+/**
+  * @brief TIM MSP Initialization 
+  *        This function configures the hardware resources used in this example: 
+  *           - Peripheral's clock enable
+  *           - Peripheral's GPIO Configuration  
+  * @param htim: TIM handle pointer
+  * @retval None
+  */
+void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
+{
+  GPIO_InitTypeDef   GPIO_InitStruct;
+  
+  /*##-1- Enable peripherals and GPIO Clocks #################################*/
+  /* TIMx Peripheral clock enable */
+  TIM2_CLK_ENABLE();
+    
+  /* Enable GPIO Channels Clock */
+  TIM2_CHANNEL_GPIO_PORT();
+  
+  /*##-2- Configure I/Os #####################################################*/
+  /* Configure PA.1 (TIM2_Channel2)in output, push-pull, alternate function mode
+  */
+  /* Common configuration for all channels */
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
+  
+}
 /**
   * @}
   */

@@ -8,6 +8,88 @@ volatile void LCD_Delay(char j);
 void LCD_Rst(void);
 void LCD_ColorBox(uint16_t xStart,uint16_t yStart,uint16_t xLong,uint16_t yLong,uint16_t Color);
 
+/* Timer handler declaration */
+extern TIM_HandleTypeDef    TimHandle;
+
+/* Timer Output Compare Configuration Structure declaration */
+extern TIM_OC_InitTypeDef sConfig;
+
+void LCD_BACKLIGHT_PWM_Init(void)
+{
+	/* Compute the prescaler value to have TIM3 counter clock equal to 8 MHz */
+  uwPrescalerValue = ((SystemCoreClock /2) / 8000000) - 1;
+
+  
+  /*##-1- Configure the TIM peripheral #######################################*/ 
+  /* Initialize TIMx peripheral as follow:
+       + Prescaler = (SystemCoreClock/2)/8000000
+       + Period = 1800  (to have an output frequency equal to 10 KHz)
+       + ClockDivision = 0
+       + Counter direction = Up
+  */
+  TimHandle.Instance = TIM2;
+  
+  TimHandle.Init.Prescaler     = uwPrescalerValue;
+  TimHandle.Init.Period        = PERIOD_VALUE;
+  TimHandle.Init.ClockDivision = 0;
+  TimHandle.Init.CounterMode   = TIM_COUNTERMODE_UP;
+  if(HAL_TIM_PWM_Init(&TimHandle) != HAL_OK)
+  {
+    /* Initialization Error */
+    Error_Handler();
+  }
+  
+  /*##-2- Configure the PWM channels #########################################*/ 
+  /* Common configuration for all channels */
+  sConfig.OCMode     = TIM_OCMODE_PWM1;
+  sConfig.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfig.OCFastMode = TIM_OCFAST_DISABLE;
+
+  /* Set the pulse value for channel 1 */
+  sConfig.Pulse = PULSE1_VALUE;  
+  if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_1) != HAL_OK)
+  {
+    /* Configuration Error */
+    Error_Handler();
+  }
+  
+  /* Set the pulse value for channel 2 */
+  sConfig.Pulse = PULSE2_VALUE;
+  if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_2) != HAL_OK)
+  {
+    /* Configuration Error */
+    Error_Handler();
+  }
+  
+  /* Set the pulse value for channel 3 */
+  sConfig.Pulse = PULSE3_VALUE;
+  if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_3) != HAL_OK)
+  {
+    /* Configuration Error */
+    Error_Handler();
+  }
+  
+  /* Set the pulse value for channel 4 */
+  sConfig.Pulse = PULSE4_VALUE;
+  if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_4) != HAL_OK)
+  {
+    /* Configuration Error */
+    Error_Handler();
+  }
+  
+  /*##-3- Start PWM signals generation #######################################*/ 
+  /* Start channel 1 */
+  if(HAL_TIM_PWM_Start(&TimHandle, TIM_CHANNEL_1) != HAL_OK)
+  {
+    /* Starting Error */
+    Error_Handler();
+  }
+	
+	
+	
+	
+}
+
 void LCD_Init(void)
 {
 	/*Configure the LCD  control GPIO */

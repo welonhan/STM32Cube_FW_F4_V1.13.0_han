@@ -141,6 +141,33 @@
 
 #define SRAM_TIMEOUT     ((uint32_t)0xFFFF) 
 
+/* Definition for TIMx clock resources */
+//#define TIMx                           TIM3
+#define TIM2_CLK_ENABLE                __HAL_RCC_TIM2_CLK_ENABLE
+
+/* Definition for USARTx Pins */
+#define TIM2_CHANNEL_GPIO_PORT()       __HAL_RCC_GPIOA_CLK_ENABLE()
+#define GPIO_PIN_CHANNEL2              GPIO_PIN_1
+
+/* Private typedef -----------------------------------------------------------*/
+#define  PERIOD_VALUE       (1800 - 1)  /* Period Value  */
+#define  PULSE1_VALUE       1350        /* Capture Compare 1 Value  */
+#define  PULSE2_VALUE       900         /* Capture Compare 2 Value  */
+#define  PULSE3_VALUE       600         /* Capture Compare 3 Value  */
+#define  PULSE4_VALUE       450         /* Capture Compare 4 Value  */
+
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Timer handler declaration */
+TIM_HandleTypeDef    TimHandle;
+
+/* Timer Output Compare Configuration Structure declaration */
+TIM_OC_InitTypeDef sConfig;
+
+/* Counter Prescaler value */
+uint32_t uwPrescalerValue = 0;
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 
