@@ -34,7 +34,9 @@
 
 void BSP_LCD_Init(void);
 void BSP_LCD_DrawPixel(uint16_t x, uint16_t y, int Color);
-
+void LCD_BACKLIGHT_PWM_Init(void);
+void LCD_BACKLIGHT_PWM_50duty(void);
+void LCD_BACKLIGHT_PWM_25duty(void);
 
 #endif
 

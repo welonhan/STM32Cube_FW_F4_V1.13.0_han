@@ -17,7 +17,8 @@ extern TIM_OC_InitTypeDef sConfig;
 void LCD_BACKLIGHT_PWM_Init(void)
 {
 	/* Compute the prescaler value to have TIM3 counter clock equal to 8 MHz */
-  uwPrescalerValue = ((SystemCoreClock /2) / 8000000) - 1;
+  uint32_t uwPrescalerValue = 0;
+	uwPrescalerValue = ((168000000 /2) / 8000000) - 1;
 
   
   /*##-1- Configure the TIM peripheral #######################################*/ 
@@ -36,7 +37,8 @@ void LCD_BACKLIGHT_PWM_Init(void)
   if(HAL_TIM_PWM_Init(&TimHandle) != HAL_OK)
   {
     /* Initialization Error */
-    Error_Handler();
+    //Error_Handler();
+		printf("lcd backlight pwm init fail\n\r");
   }
   
   /*##-2- Configure the PWM channels #########################################*/ 
@@ -47,47 +49,59 @@ void LCD_BACKLIGHT_PWM_Init(void)
 
   /* Set the pulse value for channel 1 */
   sConfig.Pulse = PULSE1_VALUE;  
-  if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_1) != HAL_OK)
-  {
-    /* Configuration Error */
-    Error_Handler();
-  }
-  
-  /* Set the pulse value for channel 2 */
-  sConfig.Pulse = PULSE2_VALUE;
   if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_2) != HAL_OK)
   {
     /* Configuration Error */
-    Error_Handler();
-  }
-  
-  /* Set the pulse value for channel 3 */
-  sConfig.Pulse = PULSE3_VALUE;
-  if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_3) != HAL_OK)
-  {
-    /* Configuration Error */
-    Error_Handler();
-  }
-  
-  /* Set the pulse value for channel 4 */
-  sConfig.Pulse = PULSE4_VALUE;
-  if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_4) != HAL_OK)
-  {
-    /* Configuration Error */
-    Error_Handler();
+    printf("lcd backlight pwm setting pulse1 fail\n\r");
   }
   
   /*##-3- Start PWM signals generation #######################################*/ 
   /* Start channel 1 */
-  if(HAL_TIM_PWM_Start(&TimHandle, TIM_CHANNEL_1) != HAL_OK)
+  if(HAL_TIM_PWM_Start(&TimHandle, TIM_CHANNEL_2) != HAL_OK)
   {
     /* Starting Error */
-    Error_Handler();
+    printf("lcd backlight pwm start fail\n\r");
+  }	
+}
+
+void LCD_BACKLIGHT_PWM_50duty(void)
+{
+	/* Set the pulse value for channel 1 */
+  sConfig.Pulse = PULSE1_VALUE;  
+  if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_2) != HAL_OK)
+  {
+    /* Configuration Error */
+    printf("lcd backlight pwm setting pulse1 fail\n\r");
   }
+  
+  /*##-3- Start PWM signals generation #######################################*/ 
+  /* Start channel 1 */
 	
+  if(HAL_TIM_PWM_Start(&TimHandle, TIM_CHANNEL_2) != HAL_OK)
+  {
+   
+    printf("lcd backlight pwm start fail\n\r");
+  }	
+}
+
+void LCD_BACKLIGHT_PWM_25duty(void)
+{
+	/* Set the pulse value for channel 1 */
+  sConfig.Pulse = PULSE3_VALUE;  
+  if(HAL_TIM_PWM_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_2) != HAL_OK)
+  {
+    /* Configuration Error */
+    printf("lcd backlight pwm setting pulse1 fail\n\r");
+  }
+  
+  /*##-3- Start PWM signals generation #######################################*/ 
+  /* Start channel 1 */
 	
-	
-	
+  if(HAL_TIM_PWM_Start(&TimHandle, TIM_CHANNEL_2) != HAL_OK)
+  {
+    
+    printf("lcd backlight pwm start fail\n\r");
+  }	
 }
 
 void LCD_Init(void)
@@ -107,7 +121,7 @@ void LCD_Init(void)
     
   /* GPIOD configuration */
 	// RESET BACKLIGHT_EN												 
-  GPIO_Init_Structure.Pin   = GPIO_PIN_8 | GPIO_PIN_1 ;   
+  GPIO_Init_Structure.Pin   = GPIO_PIN_8 ;   
   HAL_GPIO_Init(GPIOA, &GPIO_Init_Structure);	
 	LCD_Rst();
 			
@@ -156,7 +170,7 @@ void LCD_Rst(void)
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);			//LCD RESET=0 
 	HAL_Delay(5);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);				//LCD RESET=1	
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);				//LCD BACKLIGHT=1
+	//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);				//LCD BACKLIGHT=1
 }
 
  void WriteComm(uint16_t CMD)

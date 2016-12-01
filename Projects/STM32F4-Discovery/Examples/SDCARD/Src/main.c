@@ -75,13 +75,20 @@ TOUCH_XY_Typedef TOUCH_Dat;
 FATFS SDFatFs;  /* File system object for SD card logical drive */
 FIL MyFile;     /* File object */
 char SDPath[4]; /* SD card logical drive path */
-
+uint8_t duty=0;
 
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
+TIM_HandleTypeDef    TimHandle;
+
+/* Timer Output Compare Configuration Structure declaration */
+TIM_OC_InitTypeDef sConfig;
+
+/* Counter Prescaler value */
+
 
 /**
   * @brief  Main program
@@ -118,6 +125,8 @@ int main(void)
 	
 	BSP_UART2_Init();	
 	printf("UART2 init ok!\n\r");
+	
+	LCD_BACKLIGHT_PWM_Init();
 	
 	BSP_LCD_Init();
 	printf("LCD init ok!\n\r");
@@ -308,6 +317,15 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	if(GPIO_Pin == KEY_BUTTON_PIN)									//PA0 KEY INT
   {
     BSP_LED_Toggle(LED3);
+		if (duty==0)
+		{	LCD_BACKLIGHT_PWM_50duty();
+			duty=1;
+		}
+			else 
+		{
+			LCD_BACKLIGHT_PWM_25duty();
+			duty=0;
+		}
   }
 }
 /**

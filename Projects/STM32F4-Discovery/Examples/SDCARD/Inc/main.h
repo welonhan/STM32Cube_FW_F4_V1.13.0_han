@@ -150,23 +150,17 @@
 #define GPIO_PIN_CHANNEL2              GPIO_PIN_1
 
 /* Private typedef -----------------------------------------------------------*/
-#define  PERIOD_VALUE       (1800 - 1)  /* Period Value  */
-#define  PULSE1_VALUE       1350        /* Capture Compare 1 Value  */
-#define  PULSE2_VALUE       900         /* Capture Compare 2 Value  */
-#define  PULSE3_VALUE       600         /* Capture Compare 3 Value  */
-#define  PULSE4_VALUE       450         /* Capture Compare 4 Value  */
+#define  PERIOD_VALUE       (8000 - 1)  /* Period Value  */
+#define  PULSE1_VALUE       7500        /* Capture Compare 1 Value  */
+#define  PULSE2_VALUE       5000         /* Capture Compare 2 Value  */
+#define  PULSE3_VALUE       2000         /* Capture Compare 3 Value  */
+//#define  PULSE4_VALUE       450         /* Capture Compare 4 Value  */
 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Timer handler declaration */
-TIM_HandleTypeDef    TimHandle;
 
-/* Timer Output Compare Configuration Structure declaration */
-TIM_OC_InitTypeDef sConfig;
-
-/* Counter Prescaler value */
-uint32_t uwPrescalerValue = 0;
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
