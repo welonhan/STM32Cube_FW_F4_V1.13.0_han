@@ -127,9 +127,9 @@ static uint8_t  I2Cx_ReadData(uint8_t Addr, uint8_t Reg);
 static void     I2Cx_MspInit(void);
 static void     I2Cx_Error(uint8_t Addr);
 
-static void     SPIx_Init(void);
+//static void     SPIx_Init(void);
 static void     SPIx_MspInit(void);
-static uint8_t  SPIx_WriteRead(uint8_t Byte);
+//static uint8_t  SPIx_WriteRead(uint8_t Byte);
 static  void    SPIx_Error(void);
 
 /* Link functions for Accelerometer peripheral */
@@ -308,7 +308,7 @@ uint32_t BSP_PB_GetState(Button_TypeDef Button)
 /**
   * @brief  SPIx Bus initialization
   */
-static void SPIx_Init(void)
+void SPIx_Init(void)
 {
   if(HAL_SPI_GetState(&SpiHandle) == HAL_SPI_STATE_RESET)
   {
@@ -337,7 +337,7 @@ static void SPIx_Init(void)
   * @param  Byte: Byte send.
   * @retval The received byte value
   */
-static uint8_t SPIx_WriteRead(uint8_t Byte)
+uint8_t SPIx_WriteRead(uint8_t Byte)
 {
   uint8_t receivedbyte = 0;
   

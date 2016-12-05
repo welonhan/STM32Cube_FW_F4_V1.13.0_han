@@ -373,7 +373,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,USE_STM32F4_DISCO</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\Middlewares\Third_Party\FatFs\src;..\..\..\..\..\Drivers\BSP\STM32F4-Discovery;..\..\..\..\..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc;..\..\..\..\..\Middlewares\Third_Party\FatFs\src\drivers;..\Inc</IncludePath>
+              <IncludePath>..\..\..\..\..\Middlewares\Third_Party\FatFs\src;..\..\..\..\..\Drivers\BSP\STM32F4-Discovery;..\..\..\..\..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc;..\..\..\..\..\Middlewares\Third_Party\FatFs\src\drivers;..\Inc;..\..\..\..\..\Drivers\BSP\24L01</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -844,7 +844,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/BSP/LCD_TP_SD_UART</GroupName>
+          <GroupName>Drivers/BSP</GroupName>
           <Files>
             <File>
               <FileName>stm32f4_discovery_sd.c</FileName>
@@ -865,6 +865,16 @@
               <FileName>stm32f4_discovery_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\stm32f4_discovery_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4_nrf24l01.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\Drivers\BSP\24L01\stm32f4_nrf24l01.c</FilePath>
+            </File>
+            <File>
+              <FileName>tm_stm32f4_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\Drivers\BSP\24L01\tm_stm32f4_spi.c</FilePath>
             </File>
           </Files>
         </Group>

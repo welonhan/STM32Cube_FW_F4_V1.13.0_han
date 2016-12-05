@@ -51,6 +51,7 @@
 #include "stm32f4_discovery_uart.h"
 #include "stm32f4_discovery_touch.h"
 #include "stm32f4_discovery_sd.h"
+#include "stm32f4_nrf24l01.h"
 
 /* FatFs includes component */
 #include "ff_gen_drv.h"
@@ -133,6 +134,8 @@ int main(void)
 	
 	BSP_TOUCH_Init();
 	
+	TM_NRF24L01_Init(1,32);
+	BSP_NRF24L01_Test();
 	while(1)
 	{
 		//BSP_TOUCH_Test();

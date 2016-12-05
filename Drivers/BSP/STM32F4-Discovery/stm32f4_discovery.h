@@ -273,7 +273,8 @@ void     BSP_LED_Off(Led_TypeDef Led);
 void     BSP_LED_Toggle(Led_TypeDef Led);
 void     BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef Mode);
 uint32_t BSP_PB_GetState(Button_TypeDef Button);
-
+void 		 SPIx_Init(void);
+uint8_t  SPIx_WriteRead(uint8_t Byte);
 
 /**
   * @}
