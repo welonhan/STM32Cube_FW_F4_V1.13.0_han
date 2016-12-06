@@ -261,23 +261,23 @@ uint8_t TM_NRF24L01_Init(uint8_t channel, uint8_t payload_size) {
 	
 	/* Set pipeline to max possible 32 bytes */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P0, TM_NRF24L01_Struct.PayloadSize); // Auto-ACK pipe
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P1, TM_NRF24L01_Struct.PayloadSize); // Data payload pipe
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P2, TM_NRF24L01_Struct.PayloadSize);
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P3, TM_NRF24L01_Struct.PayloadSize);
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P4, TM_NRF24L01_Struct.PayloadSize);
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P5, TM_NRF24L01_Struct.PayloadSize);
+	//TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P1, TM_NRF24L01_Struct.PayloadSize); // Data payload pipe
+	//TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P2, TM_NRF24L01_Struct.PayloadSize);
+	//TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P3, TM_NRF24L01_Struct.PayloadSize);
+	//TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P4, TM_NRF24L01_Struct.PayloadSize);
+	//TM_NRF24L01_WriteRegister(NRF24L01_REG_RX_PW_P5, TM_NRF24L01_Struct.PayloadSize);
 	
-	/* Set RF settings (2mbps, output power) */
+	/* Set RF settings (250kbps, output power) */
 	TM_NRF24L01_SetRF(TM_NRF24L01_Struct.DataRate, TM_NRF24L01_Struct.OutPwr);
 	
 	/* Config register */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_CONFIG, NRF24L01_CONFIG);
 	
 	/* Enable auto-acknowledgment for all pipes */
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_AA, 0x3F);
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_AA, 0x1);
 	
 	/* Enable RX addresses */
-	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_RXADDR, 0x3F);
+	TM_NRF24L01_WriteRegister(NRF24L01_REG_EN_RXADDR, 0x1);
 
 	/* Auto retransmit delay: 1000 (4x250) us and Up to 15 retransmit trials */
 	TM_NRF24L01_WriteRegister(NRF24L01_REG_SETUP_RETR, 0x4F);
@@ -560,7 +560,7 @@ void TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_t DataRate, TM_NRF24L01_OutputPower_
 void BSP_NRF24L01_Test(void)
 {
 	uint8_t *paddr, addr[5]={0x34,0x43,0x10,0x10,0x01},temp[5],i;
-	char tx_data[]="aaaaaaaaaaaaaaaaaaaazzzzzzzzzzz";
+	char tx_data[]="aaaaaaaaaaaaaaaaaaaazzzzzzzzzzb";
 	
 	paddr=addr;
 	
@@ -573,7 +573,9 @@ void BSP_NRF24L01_Test(void)
 		if(addr[i]!=temp[i])
 		{
 				printf("NRF24L01 ERROR");
+				BSP_LED_Toggle(LED3);
 				return;
+				
 		}
 	}
 	
@@ -581,7 +583,7 @@ void BSP_NRF24L01_Test(void)
 	{
 		TM_NRF24L01_Transmit((uint8_t*)tx_data);
 		HAL_Delay(1000);
-		
+		BSP_LED_Toggle(LED4);
 	}	
 }
 

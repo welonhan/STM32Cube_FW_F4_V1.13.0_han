@@ -134,7 +134,7 @@ int main(void)
 	
 	BSP_TOUCH_Init();
 	
-	TM_NRF24L01_Init(1,32);
+	//TM_NRF24L01_Init(60,32);
 	BSP_NRF24L01_Test();
 	while(1)
 	{
