@@ -89,7 +89,7 @@ TIM_HandleTypeDef    TimHandle;
 TIM_OC_InitTypeDef sConfig;
 
 /* Counter Prescaler value */
-
+char tx_data[]="aaaaaaaaaaaaaaaaaaaazzzzzzzzzzb";
 
 /**
   * @brief  Main program
@@ -138,8 +138,10 @@ int main(void)
 	BSP_NRF24L01_Test();
 	while(1)
 	{
-		//BSP_TOUCH_Test();
-		//HAL_Delay(500);
+		TM_NRF24L01_Transmit((uint8_t*)tx_data);
+		HAL_Delay(1000);
+		BSP_LED_Toggle(LED4);
+	
 	}
   
   /*##-1- Link the micro SD disk I/O driver ##################################*/

@@ -560,7 +560,7 @@ void TM_NRF24L01_SetRF(TM_NRF24L01_DataRate_t DataRate, TM_NRF24L01_OutputPower_
 void BSP_NRF24L01_Test(void)
 {
 	uint8_t *paddr, addr[5]={0x34,0x43,0x10,0x10,0x01},temp[5],i;
-	char tx_data[]="aaaaaaaaaaaaaaaaaaaazzzzzzzzzzb";
+	//char tx_data[]="aaaaaaaaaaaaaaaaaaaazzzzzzzzzzb";
 	
 	paddr=addr;
 	
@@ -578,13 +578,8 @@ void BSP_NRF24L01_Test(void)
 				
 		}
 	}
+	//TM_NRF24L01_Transmit((uint8_t*)tx_data);
 	
-	while(1)
-	{
-		TM_NRF24L01_Transmit((uint8_t*)tx_data);
-		HAL_Delay(1000);
-		BSP_LED_Toggle(LED4);
-	}	
 }
 
 
