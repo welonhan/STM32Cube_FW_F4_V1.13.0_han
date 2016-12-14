@@ -51,7 +51,7 @@
 #include "stm32f4_discovery_uart.h"
 #include "stm32f4_discovery_touch.h"
 #include "stm32f4_discovery_sd.h"
-#include "stm32f4_nrf24l01.h"
+#include "drv_RF24l01.h"
 
 /* FatFs includes component */
 #include "ff_gen_drv.h"
@@ -89,7 +89,10 @@ TIM_HandleTypeDef    TimHandle;
 TIM_OC_InitTypeDef sConfig;
 
 /* Counter Prescaler value */
-char tx_data[]="aaaaaaaaaaaaaaaaaaaazzzzzzzzzzb";
+char tx_data[32]="aaaaaaaaaaaaaaaaaaaazzzzzzzzzzb";
+uint8_t NRF24L01_RX_DATA[32]={0};
+
+uint8_t NRF24L01_ACK[8]={88,00,99,99,00,00,66,55};
 
 /**
   * @brief  Main program
@@ -134,14 +137,13 @@ int main(void)
 	
 	BSP_TOUCH_Init();
 	
-	//TM_NRF24L01_Init(60,32);
-	BSP_NRF24L01_Test();
+	NRF24L01_check();
+	
+	NRF24L01_Init();
+	
 	while(1)
 	{
-		TM_NRF24L01_Transmit((uint8_t*)tx_data);
-		HAL_Delay(1000);
-		BSP_LED_Toggle(LED4);
-	
+			
 	}
   
   /*##-1- Link the micro SD disk I/O driver ##################################*/
@@ -308,6 +310,7 @@ static void SystemClock_Config(void)
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+	uint8_t NRF24L01_IRQ_status,i;
   if(GPIO_Pin == TOUCH_INT_PIN)										//PB7 TOUCH INT
   {
     if(BSP_TOUCH_Read(TOUCH_Dat)==0)
@@ -322,6 +325,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	if(GPIO_Pin == KEY_BUTTON_PIN)									//PA0 KEY INT
   {
     BSP_LED_Toggle(LED3);
+		NRF24L01_TxPacket( (uint8_t *)tx_data, 32 );
 		if (duty==0)
 		{	LCD_BACKLIGHT_PWM_50duty();
 			duty=1;
@@ -332,6 +336,21 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			duty=0;
 		}
   }
+	
+	if(GPIO_Pin == RF24L01_IRQ_GPIO_PIN)						//RF24L01 IRQ
+	{
+		NRF24L01_IRQ_status=NRF24L01_IRQ((uint8_t *) NRF24L01_RX_DATA);
+		if(NRF24L01_IRQ_status ==(TX_OK|RX_OK))
+		{	
+			for(i=0;i<8;i++)
+			{
+				if(NRF24L01_ACK[i]!=NRF24L01_RX_DATA[i])
+					return;
+			}	
+			BSP_LED_Toggle(LED4);			
+		}
+	}
+	
 }
 /**
   * @brief  This function is executed in case of error occurrence.

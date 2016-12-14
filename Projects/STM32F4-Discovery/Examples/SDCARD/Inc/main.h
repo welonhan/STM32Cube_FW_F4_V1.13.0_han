@@ -129,6 +129,22 @@
 
 #define TOUCH_INT_PIN                		GPIO_PIN_7
 
+/** RF24L01?????? */
+#define RF24L01_CE_GPIO_PIN                      	GPIO_PIN_0                 /* PB.00 */
+#define RF24L01_IRQ_GPIO_PIN                     	GPIO_PIN_1                 /* PB.01 */
+#define RF24L01_CS_GPIO_PIN                     	GPIO_PIN_15                /* PA.15 */
+
+#define RF24L01_CE_GPIO_CLK_ENABLE()            	__GPIOB_CLK_ENABLE()
+#define RF24L01_CE_GPIO_CLK_DISABLE()           	__GPIOB_CLK_DISABLE()
+#define RF24L01_CE_GPIO_PORT                  		GPIOB                      /* GPIOB */
+
+#define RF24L01_IRQ_GPIO_CLK_ENABLE()            	__GPIOB_CLK_ENABLE()
+#define RF24L01_IRQ_GPIO_CLK_DISABLE()           	__GPIOB_CLK_DISABLE()
+#define RF24L01_IRQ_GPIO_PORT                  		GPIOB                      /* GPIOB */
+
+#define RF24L01_CS_GPIO_CLK_ENABLE()            	__GPIOA_CLK_ENABLE()
+#define RF24L01_CS_GPIO_CLK_DISABLE()           	__GPIOA_CLK_DISABLE()
+#define RF24L01_CS_GPIO_PORT                  		GPIOA                      /* GPIOA */
 
 
 /* Exported constants --------------------------------------------------------*/

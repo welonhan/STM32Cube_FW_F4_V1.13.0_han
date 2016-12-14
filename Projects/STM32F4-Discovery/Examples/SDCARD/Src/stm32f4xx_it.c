@@ -253,6 +253,16 @@ void EXTI0_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(KEY_BUTTON_PIN);
 }
 
+
+/**
+  * @brief  This function handles External line 0 interrupt request.
+  * @param  None
+  * @retval None
+  */
+void EXTI1_IRQHandler(void)
+{
+  HAL_GPIO_EXTI_IRQHandler(RF24L01_IRQ_GPIO_PIN);
+}
 /**
   * @brief  This function handles PPP interrupt request.
   * @param  None

@@ -352,7 +352,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>0</Optim>
+            <Optim>1</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -868,14 +868,9 @@
               <FilePath>..\Src\stm32f4_discovery_uart.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4_nrf24l01.c</FileName>
+              <FileName>drv_RF24L01.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\Drivers\BSP\24L01\stm32f4_nrf24l01.c</FilePath>
-            </File>
-            <File>
-              <FileName>tm_stm32f4_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\Drivers\BSP\24L01\tm_stm32f4_spi.c</FilePath>
+              <FilePath>..\Src\drv_RF24L01.c</FilePath>
             </File>
           </Files>
         </Group>
