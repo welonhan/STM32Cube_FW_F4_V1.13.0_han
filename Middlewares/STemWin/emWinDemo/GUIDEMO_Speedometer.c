@@ -1,6 +1,5 @@
 /*********************************************************************
-*          Portions COPYRIGHT 2015 STMicroelectronics                *
-*          Portions SEGGER Microcontroller GmbH & Co. KG             *
+*                SEGGER Microcontroller GmbH & Co. KG                *
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
@@ -10,7 +9,7 @@
 *                                                                    *
 **********************************************************************
 
-** emWin V5.28 - Graphical user interface for embedded applications **
+** emWin V5.32 - Graphical user interface for embedded applications **
 All  Intellectual Property rights  in the Software belongs to  SEGGER.
 emWin is protected by  international copyright laws.  Knowledge of the
 source code may not be used to write a similar product.  This file may
@@ -27,36 +26,21 @@ Full source code is available at: www.segger.com
 
 We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
+Licensing information
+
+Licensor:                 SEGGER Software GmbH
+Licensed to:              STMicroelectronics International NV
+Licensed SEGGER software: emWin
+License number:           GUI-00429
+License model:            Buyout SRC [Buyout Source Code License, signed November 29th 2012]
+Licensed product:         -
+Licensed platform:        STMs ARM Cortex-M based 32 BIT CPUs
+Licensed number of seats: -
+----------------------------------------------------------------------
 File        : MEMDEV_Speedometer.c
 Purpose     : Shows how to use memory devices for rotation.
 ---------------------------END-OF-HEADER------------------------------
 */
-
-/**
-  ******************************************************************************
-  * @file    MEMDEV_Speedometer.c
-  * @author  MCD Application Team
-  * @version V1.4.2
-  * @date    13-November-2015
-  * @brief   Shows how to use memory devices for rotation.
-  ******************************************************************************
-  * @attention
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
 
 #include "GUIDEMO.h"
 
@@ -68,17 +52,15 @@ Purpose     : Shows how to use memory devices for rotation.
 *
 **********************************************************************
 */
-#define COLOR_RING0    0xCCCCCC
-#define COLOR_RING1    0x333333
-#define COLOR_SCALE0   0x111111
-#define COLOR_SCALE1   0x111111
-#define COLOR_DIGIT    0xCCCCCC
-#define COLOR_CMARK    0xCCCCCC
-#define COLOR_BACK0    0xFF3333
-#define COLOR_BACK1    0x550000
-#define COLOR_DISPLAY0 0x000000
-#define COLOR_DISPLAY1 0xCCCCCC
-#define COLOR_NEEDLE   0x2080FF
+#define COLOR_RING0    GUI_MAKE_COLOR(0xCCCCCC)
+#define COLOR_RING1    GUI_MAKE_COLOR(0x333333)
+#define COLOR_SCALE0   GUI_MAKE_COLOR(0x111111)
+#define COLOR_SCALE1   GUI_MAKE_COLOR(0x111111)
+#define COLOR_DIGIT    GUI_MAKE_COLOR(0xCCCCCC)
+#define COLOR_CMARK    GUI_MAKE_COLOR(0xCCCCCC)
+#define COLOR_DISPLAY0 GUI_MAKE_COLOR(0x000000)
+#define COLOR_DISPLAY1 GUI_MAKE_COLOR(0xCCCCCC)
+#define COLOR_NEEDLE   GUI_MAKE_COLOR(0x2080FF)
 
 #define R_SCALE             101
 #define R_DIGIT              88
@@ -96,7 +78,6 @@ Purpose     : Shows how to use memory devices for rotation.
 
 #define T_MAX             10000
 #define T_ROLL             2000
-#define T_ROLL             2000
 #define MAG                   6
 
 #define T_MIN_FRAME_ROLL     30
@@ -107,6 +88,15 @@ Purpose     : Shows how to use memory devices for rotation.
 #define TIME_TITLE_FADE      250
 #define DELAY_TITLE_FADEIN  1200
 #define DELAY_TITLE_FADEOUT  500
+
+//
+// Memory device format in dependence of color format
+//
+#if (GUI_USE_ARGB)
+  #define GUI_COLOR_CONV GUICC_M8888I
+#else
+  #define GUI_COLOR_CONV GUICC_8888
+#endif
 
 /*********************************************************************
 *
@@ -2732,6 +2722,17 @@ GUI_CONST_STORAGE GUI_FONT GUI_FontRounded33 = {
 *       _SeggerLogo50x25
 */
 static GUI_CONST_STORAGE GUI_COLOR ColorsSeggerLogo50x25[] = {
+#if (GUI_USE_ARGB)
+    0xFF00FF00,0xFFFFFFFF,0xFF918F90,0xFF231F20,
+    0xFF2020A0,0xFF5858B8,0xFF5A5758,0xFFF1F1F9,
+    0xFFC7C7E7,0xFF312D2E,0xFF767374,0xFF2E2EA6,
+    0xFFD5D5ED,0xFF4A4AB2,0xFF9F9D9D,0xFFBAB9B9,
+    0xFFC8C7C7,0xFFD6D5D5,0xFF3F3B3C,0xFF6666BE,
+    0xFF8282CA,0xFFB9B9E1,0xFFE4E3E3,0xFFF1F1F1,
+    0xFF3C3CAC,0xFF838182,0xFFADABAB,0xFFABABDB,
+    0xFF4C494A,0xFF9D9DD5,0xFFE3E3F3,0xFF686566,
+    0xFF7474C4,0xFF9090D0,
+#else
      0x00FF00,0xFFFFFF,0x908F91,0x201F23
     ,0xA02020,0xB85858,0x58575A,0xF9F1F1
     ,0xE7C7C7,0x2E2D31,0x747376,0xA62E2E
@@ -2741,6 +2742,7 @@ static GUI_CONST_STORAGE GUI_COLOR ColorsSeggerLogo50x25[] = {
     ,0xAC3C3C,0x828183,0xABABAD,0xDBABAB
     ,0x4A494C,0xD59D9D,0xF3E3E3,0x666568
     ,0xC47474,0xD09090
+#endif
 };
 
 static GUI_CONST_STORAGE GUI_LOGPALETTE PalSeggerLogo50x25 = {
@@ -2846,18 +2848,18 @@ static GUI_MEMDEV_Handle _CreateRoundedRect(int xSize, int ySize, int r, U32 Col
   GUI_MEMDEV_Handle hMem;
   GUI_MEMDEV_Handle hMemRoundedRect;
 
-  hMem            = GUI_MEMDEV_CreateFixed(0, 0, xSize << 2, ySize << 2, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
-  hMemRoundedRect = GUI_MEMDEV_CreateFixed(0, 0, xSize     , ySize     , GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+  hMem            = GUI_MEMDEV_CreateFixed(0, 0, xSize * 4, ySize * 4, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
+  hMemRoundedRect = GUI_MEMDEV_CreateFixed(0, 0, xSize    , ySize    , GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   GUI_MEMDEV_Select(hMemRoundedRect);
   GUI_SetBkColor(GUI_TRANSPARENT);
   GUI_Clear();
   GUI_MEMDEV_Select(hMem);
   GUI_Clear();
   GUI_SetColor(Color0);
-  GUI_FillRoundedRect(0, 0, (xSize << 2) - 1, (ySize << 2) - 1, r << 2);
+  GUI_FillRoundedRect(0, 0, (xSize * 4) - 1, (ySize * 4) - 1, r * 4);
   GUI_SetColor(Color1);
-  GUI_DrawRoundedFrame(0, 0, (xSize << 2) - 1, (ySize << 2) - 1, r << 2, 2);
-  GUI_MEMDEV_RotateHQ(hMem, hMemRoundedRect, (-xSize * 3) >> 1, (-ySize * 3) >> 1, 0, 250);
+  GUI_DrawRoundedFrame(0, 0, (xSize * 4) - 1, (ySize * 4) - 1, r * 4, 2);
+  GUI_MEMDEV_RotateHQ(hMem, hMemRoundedRect, (-xSize * 3) / 2, (-ySize * 3) / 2, 0, 250);
   GUI_MEMDEV_Delete(hMem);
   GUI_MEMDEV_Select(0);
   return hMemRoundedRect;
@@ -2878,15 +2880,19 @@ static void _ReplaceColorsGradient(GUI_MEMDEV_Handle hMem, GUI_MEMDEV_Handle hMe
   pData         = (U32 *)GUI_MEMDEV_GetDataPtr(hMem);
   pDataGradient = (U32 *)GUI_MEMDEV_GetDataPtr(hMemGradient);
   for (i = 0; i < ySize; i++) {
-    ColorGradient = *pDataGradient++;
+    ColorGradient = (*pDataGradient++) & 0xFFFFFF;
     for (j = 0; j < xSize; j++) {
       Color = *pData;
       if (Color) {
+#if (GUI_USE_ARGB)
+        *pData = ColorGradient | (Color & 0xFF) << 24;
+#else
         *pData = ColorGradient | ((Color & 0xFF) ^ 0xFF) << 24;
+#endif
       } else {
         *pData = GUI_TRANSPARENT;
       }
-      *pData++;
+      pData++;
     }
   }
 }
@@ -2907,9 +2913,13 @@ static void _ReplaceColors(GUI_MEMDEV_Handle hMem, U32 Color) {
     for (j = 0; j < xSize; j++) {
       ColorOld = *pData;
       if (ColorOld != GUI_TRANSPARENT) {
+#if (GUI_USE_ARGB)
+        *pData = Color | ((ColorOld & 0xFF)) << 24;
+#else
         *pData = Color | ((ColorOld & 0xFF) ^ 0xFF) << 24;
+#endif
       }
-      *pData++;
+      pData++;
     }
   }
 }
@@ -2924,13 +2934,17 @@ static GUI_MEMDEV_Handle _CreateCircle(int r, U32 Color0, U32 Color1) {
   int               Width;
 
   Width        = r * 2 + 1;
-  hMemCircle   = GUI_MEMDEV_CreateFixed(0, 0, Width, Width, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
-  hMemGradient = GUI_MEMDEV_CreateFixed(0, 0,     1, Width, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+  hMemCircle   = GUI_MEMDEV_CreateFixed(0, 0, Width, Width, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
+  hMemGradient = GUI_MEMDEV_CreateFixed(0, 0,     1, Width, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   GUI_MEMDEV_Select(hMemCircle);
   //
   // Set all indices to 0
   //
+#if (GUI_USE_ARGB)
+  GUI_SetBkColorIndex(0xFF000000);
+#else
   GUI_SetBkColorIndex(0);
+#endif
   GUI_Clear();
   //
   // Draw circle
@@ -2959,13 +2973,17 @@ static GUI_MEMDEV_Handle _CreateRing(int r, int w, U32 Color0, U32 Color1) {
   int               xSize, ySize;
 
   xSize = ySize = r * 2 + 1;
-  hMem         = GUI_MEMDEV_CreateFixed(0, 0, xSize, ySize, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
-  hMemGradient = GUI_MEMDEV_CreateFixed(0, 0,     1, ySize, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+  hMem         = GUI_MEMDEV_CreateFixed(0, 0, xSize, ySize, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
+  hMemGradient = GUI_MEMDEV_CreateFixed(0, 0,     1, ySize, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   GUI_MEMDEV_Select(hMem);
   //
   // Set all indices to 0
   //
+#if (GUI_USE_ARGB)
+  GUI_SetBkColorIndex(0xFF000000);
+#else
   GUI_SetBkColorIndex(0);
+#endif
   GUI_Clear();
   //
   // Draw arc
@@ -3033,7 +3051,11 @@ static GUI_MEMDEV_Handle _CreateDoubleRing(int r, int w0, int w1, U32 Color0, U3
   RemPixels = xSize * ySize;
   do {
     if (*pData2++) {
+#if (GUI_USE_ARGB)
+      *pData0 |= 0xFF000000;
+#else
       *pData0 &= 0xFFFFFF;
+#endif
     }
     pData0++;
   } while (--RemPixels);
@@ -3052,26 +3074,32 @@ static GUI_MEMDEV_Handle _CreateDoubleRing(int r, int w0, int w1, U32 Color0, U3
 *
 *       _MakeNumberStringEx
 */
-static void _MakeNumberStringEx(int v, int NumDecs, char * acBuffer) {
+static void _MakeNumberStringEx(int v, int NumDecs, char * pBuffer) {
   int i, a;
 
   NumDecs--;
-  acBuffer[NumDecs - 0] = '0' + (a = v) % 10;
+  pBuffer[NumDecs - 0] = '0' + (a = v) % 10;
   for (i = 1; i <= NumDecs; i++) {
-    acBuffer[NumDecs - i] = '0' + (a /= 10) % 10;
+    pBuffer[NumDecs - i] = '0' + (a /= 10) % 10;
   }
-  acBuffer[NumDecs + 1] = 0;
+  pBuffer[NumDecs + 1] = 0;
 }
 
 /*********************************************************************
 *
 *       _MakeNumberString
 */
-static void _MakeNumberString(int v, char * acBuffer) {
-  int NumDecs, i;
+static void _MakeNumberString(int v, char * pBuffer) {
+  int NumDecs;
+  int i;
 
-  for (i = v, NumDecs = (v == 0) ? 1 : 0; i; i /= 10, NumDecs++);
-  _MakeNumberStringEx(v, NumDecs, acBuffer);
+  NumDecs = (v == 0) ? 1 : 0;
+  i       = v;
+  while (i) {
+    i /= 10;
+    NumDecs++;
+  }
+  _MakeNumberStringEx(v, NumDecs, pBuffer);
 }
 
 /*********************************************************************
@@ -3086,8 +3114,8 @@ static GUI_MEMDEV_Handle _CreateReflex(int r, int dy, int a, U32 Color, U8 Inten
   U32               * pData;
   U32                 NumPixels;
 
-  Width        = (r << 1) + 1;
-  hMemGradient = GUI_MEMDEV_CreateFixed(0, 0, (64 << 1) + 1, (64 << 1) + 1, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+  Width        = (r * 2) + 1;
+  hMemGradient = GUI_MEMDEV_CreateFixed(0, 0, (64 << 1) + 1, (64 << 1) + 1, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   //
   // Initialize background
   //
@@ -3099,7 +3127,11 @@ static GUI_MEMDEV_Handle _CreateReflex(int r, int dy, int a, U32 Color, U8 Inten
   //
   GUI_SetPenSize(2);
   for (i = 64; i >= 0; i--) {
+#if (GUI_USE_ARGB)
+    Index = (((((64 - i) * 255) / 64) * Intens) / 255) | 0xFF000000;
+#else
     Index = ((((64 - i) * 255) / 64) * Intens) / 255;
+#endif
     GUI_SetColorIndex(Index);
     GUI_DrawArc(64, 64, i, i, 0, 360);
   }
@@ -3110,13 +3142,17 @@ static GUI_MEMDEV_Handle _CreateReflex(int r, int dy, int a, U32 Color, U8 Inten
   pData     = (U32 *)GUI_MEMDEV_GetDataPtr(hMemGradient);
   NumPixels = 129 * 129;
   do {
+#if (GUI_USE_ARGB)
+    *pData = (*pData << 24) | Color;
+#else
     *pData = ((0xFF - *pData) << 24) | Color;
-    *pData++;
+#endif
+    pData++;
   } while (--NumPixels);
   //
   // Create reflexion device
   //
-  hMemReflex = GUI_MEMDEV_CreateFixed(0, 0, Width, Width, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+  hMemReflex = GUI_MEMDEV_CreateFixed(0, 0, Width, Width, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   GUI_MEMDEV_Select(hMemReflex);
   GUI_SetBkColor(GUI_TRANSPARENT);
   GUI_Clear();
@@ -3130,7 +3166,7 @@ static GUI_MEMDEV_Handle _CreateReflex(int r, int dy, int a, U32 Color, U8 Inten
   // Rotate if required
   //
   if (a) {
-    hMemRot = GUI_MEMDEV_CreateFixed(0, 0, Width, Width, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+    hMemRot = GUI_MEMDEV_CreateFixed(0, 0, Width, Width, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
     GUI_MEMDEV_Select(hMemRot);
     GUI_SetBkColor(GUI_TRANSPARENT);
     GUI_Clear();
@@ -3146,13 +3182,16 @@ static GUI_MEMDEV_Handle _CreateReflex(int r, int dy, int a, U32 Color, U8 Inten
 *
 *       _RemoveTransparencyEffectCirc
 */
-static void _RemoveTransparencyEffectCirc(GUI_MEMDEV_Handle hMem, int r, U32 AndMask) {
+static void _RemoveTransparencyEffectCirc(GUI_MEMDEV_Handle hMem, int r, U32 AndMask, U32 OrMask) {
   GUI_MEMDEV_Handle   hMemCirc;
   U32               * pData;
   U8                * pDataCirc;
   int                 xSize, ySize;
   U32                 NumPixels;
 
+#if (GUI_USE_ARGB == 0)
+  GUI_USE_PARA(OrMask);
+#endif
   xSize    = ySize = r * 2 + 1;
   hMemCirc = GUI_MEMDEV_CreateFixed(0, 0, xSize, ySize, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_8, GUI_COLOR_CONV_8666);
   GUI_MEMDEV_Select(hMemCirc);
@@ -3164,11 +3203,21 @@ static void _RemoveTransparencyEffectCirc(GUI_MEMDEV_Handle hMem, int r, U32 And
   pData     = (U32 *)GUI_MEMDEV_GetDataPtr(hMem);
   NumPixels = xSize * ySize;
   do {
+#if (GUI_USE_ARGB)
+    if (*pDataCirc++) {
+      *pData &= AndMask;
+      *pData |= OrMask;
+      pData++;
+    } else {
+      *pData++ = 0x00000000;
+    }
+#else
     if (*pDataCirc++) {
       *pData++ &= AndMask;
     } else {
       *pData++ = 0xFF000000;
     }
+#endif
   } while (--NumPixels);
   GUI_MEMDEV_Delete(hMemCirc);
 }
@@ -3245,8 +3294,8 @@ static GUI_MEMDEV_Handle _CreateScale(
     //
     // Calculate position on radius
     //
-    xPos = rRing + ((rDigits * CosHQ) >> 16);
-    yPos = rRing - ((rDigits * SinHQ) >> 16);
+    xPos = rRing + (SHIFT_RIGHT_16(rDigits * CosHQ));
+    yPos = rRing - (SHIFT_RIGHT_16(rDigits * SinHQ));
     //
     // Get text rectangle
     //
@@ -3257,12 +3306,16 @@ static GUI_MEMDEV_Handle _CreateScale(
     // Create quadratic memory device for text
     //
     SizeMem  = (int)(1.414f * ((xSizeText > ySizeFont) ? xSizeText : ySizeFont));
-    hMemText = GUI_MEMDEV_CreateFixed(0, 0, SizeMem, SizeMem, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+    hMemText = GUI_MEMDEV_CreateFixed(0, 0, SizeMem, SizeMem, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
     //
     // Fill with 0
     //
     GUI_MEMDEV_Select(hMemText);
+#if (GUI_USE_ARGB)
+    GUI_SetBkColorIndex(0xFF000000);
+#else
     GUI_SetBkColorIndex(0);
+#endif
     GUI_Clear();
     //
     // Draw text
@@ -3273,19 +3326,23 @@ static GUI_MEMDEV_Handle _CreateScale(
     //
     // Rotate
     //
-    hMemRot = GUI_MEMDEV_CreateFixed(0, 0, SizeMem, SizeMem, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+    hMemRot = GUI_MEMDEV_CreateFixed(0, 0, SizeMem, SizeMem, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
     GUI_MEMDEV_Select(hMemRot);
+#if (GUI_USE_ARGB)
+    GUI_SetBkColorIndex(0xFF000000);
+#else
     GUI_SetBkColorIndex(0);
+#endif
     GUI_Clear();
     GUI_MEMDEV_RotateHQ(hMemText, hMemRot, 0, 0, ((210 - i) - 90) * 1000, 1000);
     GUI_MEMDEV_Delete(hMemText);
     GUI_MEMDEV_Select(0);
-    _ReplaceColors(hMemRot, ColorDigits);
+    _ReplaceColors(hMemRot, ColorDigits & 0xFFFFFF);
     //
     // Draw
     //
     GUI_MEMDEV_Select(hMemScale);
-    GUI_MEMDEV_WriteAt(hMemRot, xPos - (SizeMem >> 1), yPos - (SizeMem >> 1));
+    GUI_MEMDEV_WriteAt(hMemRot, xPos - (SizeMem / 2), yPos - (SizeMem / 2));
     GUI_MEMDEV_Delete(hMemRot);
   }
   //
@@ -3313,12 +3370,6 @@ static GUI_MEMDEV_Handle _CreateScale(
   //
   for (i = 0; i <= MAX_SPEED; i+= 20) {
     //
-    // Calculate angle
-    //
-    a = (210 - i) * 1000;
-    SinHQ = GUI__SinHQ(a);
-    CosHQ = GUI__CosHQ(a);
-    //
     // Rotate polygon
     //
     af = ((210 - i) * 3.1415926f) / 180;
@@ -3345,12 +3396,6 @@ static GUI_MEMDEV_Handle _CreateScale(
   GUI_SetColor(ColorCheckmarks);
   for (i = 10; i <= 230; i+= 20) {
     //
-    // Calculate angle
-    //
-    a = (210 - i) * 1000;
-    SinHQ = GUI__SinHQ(a);
-    CosHQ = GUI__CosHQ(a);
-    //
     // Rotate polygon
     //
     af = ((210 - i) * 3.1415926f) / 180;
@@ -3368,7 +3413,11 @@ static GUI_MEMDEV_Handle _CreateScale(
   //
   // Large inner ring
   //
+#if (GUI_USE_ARGB)
+  hMemRing = _CreateRing(40, 3, 0xFF000000, 0xFF888888);
+#else
   hMemRing = _CreateRing(40, 3, 0x000000, 0x888888);
+#endif
   GUI_MEMDEV_Select(hMemScale);
   GUI_MEMDEV_WriteAt(hMemRing, rRing - 40 + 1, rRing - 40 + 1);
   GUI_MEMDEV_Delete(hMemRing);
@@ -3393,7 +3442,7 @@ static GUI_MEMDEV_Handle _CreateScale(
   // Reflexion on knob
   //
   hMemReflex = _CreateReflex(rKnob, -rKnob, 20, 0xFFFFFF, 0x99);
-  _RemoveTransparencyEffectCirc(hMemReflex, rKnob, 0xFFFFFFFF);
+  _RemoveTransparencyEffectCirc(hMemReflex, rKnob, 0xFFFFFFFF, 0x00000000);
   GUI_MEMDEV_Select(hMemScale);
   GUI_MEMDEV_WriteAt(hMemReflex, rRing - rKnob + 1, rRing - rKnob + 1);
   GUI_MEMDEV_Delete(hMemReflex);
@@ -3403,12 +3452,16 @@ static GUI_MEMDEV_Handle _CreateScale(
   //
   GUI_MEMDEV_Select(hMemScale);
   GUI_SetPenSize(1);
-  GUI_SetColor(0x0000cc);
+#if (GUI_USE_ARGB)
+  GUI_SetColor(0xCC0000);
+#else
+  GUI_SetColor(0x0000CC);
+#endif
   GUI_AA_DrawArc(rRing, rRing, rScale - 3, rScale - 3, 0, 360);
   //
   // Remove transparency effects
   //
-  _RemoveTransparencyEffectCirc(hMemScale, rRing, 0xFFFFFF);
+  _RemoveTransparencyEffectCirc(hMemScale, rRing, 0xFFFFFF, 0xFF000000);
   //
   // Make sure that border of scale is transparent before adding double ring
   //
@@ -3447,7 +3500,11 @@ static GUI_MEMDEV_Handle _CreateScale(
   RemPixels = xSize * ySize;
   do {
     if (*pData2++) {
+#if (GUI_USE_ARGB)
+      *pData0 |= 0xFF000000;
+#else
       *pData0 &= 0xFFFFFF;
+#endif
     }
     pData0++;
   } while (--RemPixels);
@@ -3483,7 +3540,7 @@ static GUI_COLOR _GetFontColor(PARAM * pParam, U32 Color0, U32 Color1) {
   U32               * pData;
 
   if (pParam->hMemColor == 0) {
-    pParam->hMemColor = GUI_MEMDEV_CreateFixed(0, 0, 10, 10, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+    pParam->hMemColor = GUI_MEMDEV_CreateFixed(0, 0, 10, 10, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   }
   hMemOld   = GUI_MEMDEV_Select(pParam->hMemColor);
   GUI_DrawGradientV(0, (int)pParam->Speed - MAX_SPEED, 0, (int)pParam->Speed, Color0, Color1);
@@ -3503,6 +3560,7 @@ static void _DrawNeedleAndSpeed(PARAM * pParam, int mx, int my) {
   //
   // Draw needle
   //
+  GUI_MULTIBUF_Begin();
   GUI_SetColor(COLOR_NEEDLE);
   GUI_AA_FillPolygon(pParam->aPoints, GUI_COUNTOF(pParam->aPoints), mx * MAG, my * MAG);
   //
@@ -3514,6 +3572,7 @@ static void _DrawNeedleAndSpeed(PARAM * pParam, int mx, int my) {
   GUI_SetTextAlign(GUI_TA_RIGHT);
   GUI_GotoXY(mx + 23, my + 49);
   GUI_DispDecMin((int)pParam->Speed);
+  GUI_MULTIBUF_End();
 }
 
 /*********************************************************************
@@ -3528,7 +3587,7 @@ static void _Draw(void * p) {
     GUI_MEMDEV_Write(pParam->hMemBk);
     _DrawCentered(pParam->hScale, 0, 0);
   }
-  _DrawNeedleAndSpeed(pParam, pParam->xSize >> 1, pParam->ySize >> 1);
+  _DrawNeedleAndSpeed(pParam, pParam->xSize / 2, pParam->ySize / 2);
   if (pParam->Speed >= 200) {
     pParam->Speed++;
   }
@@ -3547,7 +3606,7 @@ static void _CalcXIn(int tDiff, int tMax, int xSize, int * pix, int * piSpin) {
   xSize_LCD = LCD_GetXSize();
   fx        = 1 - (float)tDiff / tMax;
   fx        = fx * fx * fx * fx;
-  *pix      = ((xSize_LCD - xSize) >> 1) - (int)(fx * xSize_LCD);
+  *pix      = ((xSize_LCD - xSize) / 2) - (int)(fx * xSize_LCD);
   *piSpin   = (int)(fx * 1000 * xSize);
 }
 
@@ -3564,7 +3623,7 @@ static void _CalcXOut(int tDiff, int tMax, int xSize, int * pix, int * piSpin) {
   xSize_LCD = LCD_GetXSize();
   fx        = (float)tDiff / tMax;
   fx        = fx * fx * fx * fx;
-  *pix      = ((xSize_LCD - xSize) >> 1) + (int)(fx * xSize_LCD);
+  *pix      = ((xSize_LCD - xSize) / 2) + (int)(fx * xSize_LCD);
   *piSpin   = (int)(0 - fx * 1000 * xSize);
 }
 
@@ -3574,11 +3633,11 @@ static void _CalcXOut(int tDiff, int tMax, int xSize, int * pix, int * piSpin) {
 */
 static void _FillBkDev(PARAM * pParam) {
   GUI_MEMDEV_Select(pParam->hMemBk);
-  GUIDEMO_DrawBk(1);
+  GUIDEMO_DrawBk();
   GUI_SetFont(&GUI_FontRounded16);
   GUI_SetTextMode(GUI_TM_TRANS);
   GUI_SetColor(GUI_WHITE);
-  GUI_DispStringHCenterAt("STemWin", pParam->xSize - 40, 15);
+  GUI_DispStringHCenterAt("emWin", pParam->xSize - 40, 15);
   GUI_MEMDEV_Select(0);
 }
 
@@ -3593,7 +3652,7 @@ static int _Roll(PARAM * pParam, int tMax, void (* pfCalcX)(int, int, int, int *
   int tDiff,  tUsed;
   int Size_DevRotate;
 
-  hDst = GUI_MEMDEV_CreateFixed(0, 0, pParam->xSize, pParam->ySize, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+  hDst = GUI_MEMDEV_CreateFixed(0, 0, pParam->xSize, pParam->ySize, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   Size_DevRotate = GUI_MEMDEV_GetXSize(pParam->hScaleRot);
   tStart = tNow = GUIDEMO_GetTime();
   do {
@@ -3603,9 +3662,11 @@ static int _Roll(PARAM * pParam, int tMax, void (* pfCalcX)(int, int, int, int *
       GUI_MEMDEV_Select(hDst);
       GUI_MEMDEV_Write(pParam->hMemBk);
       pfCalcX(tDiff, tMax, Size_DevRotate, &ix, &iSpin);
-      GUI_MEMDEV_Rotate(pParam->hScaleRot, hDst, ix , (pParam->ySize - Size_DevRotate) >> 1, iSpin, 1000);
+      GUI_MEMDEV_Rotate(pParam->hScaleRot, hDst, ix , (pParam->ySize - Size_DevRotate) / 2, iSpin, 1000);
       GUI_MEMDEV_Select(0);
+      GUI_MULTIBUF_Begin();
       GUI_MEMDEV_Write(hDst);
+      GUI_MULTIBUF_End();
     }
     tUsed = GUIDEMO_GetTime() - tNow;
     tNow += tUsed;
@@ -3720,7 +3781,7 @@ static void _SpeedometerDemo(void) {
                                  COLOR_SCALE0, COLOR_SCALE1, COLOR_CMARK, COLOR_DIGIT, COLOR_RING0, COLOR_RING1,
                                  W_RING0, W_RING1,
                                  L_CHECK0, L_CHECK1, YPOS_LABEL);
-  Param.hScaleRot = GUI_MEMDEV_CreateFixed(0, 0, R_RING * 2 + 1, R_RING * 2 + 1, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+  Param.hScaleRot = GUI_MEMDEV_CreateFixed(0, 0, R_RING * 2 + 1, R_RING * 2 + 1, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   Param.hMemColor = 0;
   //
   // Initialize high resolution anti aliasing
@@ -3738,7 +3799,7 @@ static void _SpeedometerDemo(void) {
   // Draw needle and speed into device
   //
   Param.Speed     = 0;
-  Param.Angle     = (210 - (Param.Speed)) * 3.1415926 / 180;
+  Param.Angle     = (210 - (Param.Speed)) * 3.1415926f / 180;
   Param.FontColor = _GetFontColor(&Param, COLOR_NEEDLE, GUI_WHITE);
   GUI_RotatePolygon(Param.aPoints, _aNeedle, GUI_COUNTOF(_aNeedle), Param.Angle);
   _DrawNeedleAndSpeed(&Param, R_RING + 1, R_RING + 1);
@@ -3751,7 +3812,7 @@ static void _SpeedometerDemo(void) {
   //
   // Create background device
   //
-  Param.hMemBk = GUI_MEMDEV_CreateFixed(0, 0, Param.xSize, Param.ySize, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+  Param.hMemBk = GUI_MEMDEV_CreateFixed(0, 0, Param.xSize, Param.ySize, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   _FillBkDev(&Param);
   GUI_MEMDEV_Write(Param.hMemBk);
   //
@@ -3764,9 +3825,9 @@ static void _SpeedometerDemo(void) {
   GUI_SetFont(&GUI_FontRounded33);
   GUI_GotoXY(0, 0);
   GUI_GetTextExtend(&Rect, _acText, sizeof(_acText));
-  GUI_MoveRect(&Rect, (Param.xSize - Rect.x1) >> 1, (Param.ySize - Rect.y1) >> 1);
-  hTitle   = GUI_MEMDEV_CreateFixed(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1, Rect.y1 - Rect.y0 + 1, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
-  hTitleBk = GUI_MEMDEV_CreateFixed(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1, Rect.y1 - Rect.y0 + 1, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV_8888);
+  GUI_MoveRect(&Rect, (Param.xSize - Rect.x1) / 2, (Param.ySize - Rect.y1) / 2);
+  hTitle   = GUI_MEMDEV_CreateFixed(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1, Rect.y1 - Rect.y0 + 1, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
+  hTitleBk = GUI_MEMDEV_CreateFixed(Rect.x0, Rect.y0, Rect.x1 - Rect.x0 + 1, Rect.y1 - Rect.y0 + 1, GUI_MEMDEV_NOTRANS, GUI_MEMDEV_APILIST_32, GUI_COLOR_CONV);
   GUI_MEMDEV_Select(hTitle);
   GUI_MEMDEV_Write(Param.hMemBk);
   _DrawCentered(Param.hScaleRot, 0, 0);
@@ -3824,7 +3885,7 @@ static void _SpeedometerDemo(void) {
     //
     // Draw scene
     //
-    GUI_MEMDEV_DrawAuto(&AutoDev, &Param.AutoDevInfo, &_Draw, &Param);
+    GUI_MEMDEV_DrawAuto(&AutoDev, &Param.AutoDevInfo, _Draw, &Param);
     //
     // Wait a while
     //
@@ -3837,6 +3898,7 @@ static void _SpeedometerDemo(void) {
       GUI_MEMDEV_Delete(hTitle);
       GUI_MEMDEV_Delete(hTitleBk);
       _KillMemdevs(&Param);
+      GUI_AA_DisableHiRes();
       return;
     }
   }
@@ -3845,6 +3907,7 @@ static void _SpeedometerDemo(void) {
   GUI_MEMDEV_Delete(hTitle);
   GUI_MEMDEV_Delete(hTitleBk);
   _KillMemdevs(&Param);
+  GUI_AA_DisableHiRes();
 }
 
 /*********************************************************************
@@ -3858,17 +3921,15 @@ static void _SpeedometerDemo(void) {
 *       GUIDEMO_Speedometer
 */
 void GUIDEMO_Speedometer(void) {
-  GUIDEMO_ShowIntro("Speedometer",
-                    "Shows acceleration and\n"
-                    "deceleration on a speedometer");
+  GUIDEMO_ConfigureDemo("Speedometer", "Shows acceleration and\ndeceleration on a speedometer.", GUIDEMO_SHOW_CURSOR | GUIDEMO_SHOW_CONTROL);
   _SpeedometerDemo();
-  GUI_AA_DisableHiRes();
 }
 
 #else
 
-void GUIDEMO_Speedometer(void) {}
+void GUIDEMO_Speedometer_C(void);
+void GUIDEMO_Speedometer_C(void) {}
 
-#endif
+#endif  // SHOW_GUIDEMO_SPEEDOMETER && GUI_SUPPORT_MEMDEV
 
 /*************************** End of file ****************************/

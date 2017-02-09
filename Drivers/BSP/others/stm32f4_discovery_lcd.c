@@ -655,8 +655,9 @@ void BSP_LCD_Init(void)
 	//Lcd_Light_ON;
 	
 	WriteComm(0x3A00); WriteData(0x55);
-	WriteComm(0x3600); WriteData(0xA8);
-	LCD_ColorBox(0,0,800,480,0x07E0);
+//	WriteComm(0x3600); WriteData(0xA8);
+	WriteComm(0x3600); WriteData(0x68);
+//	LCD_ColorBox(0,0,800,480,0x07E0);
 	
 // 	LCD_Fill_Pic(80,160,320,480, gImage_MM_T035);
 // 	BlockWrite(0,0,799,479);
@@ -698,7 +699,9 @@ void BlockWrite(unsigned int Xstart,unsigned int Xend,unsigned int Ystart,unsign
 
 	WriteComm(0x2c00);
 }
-uint16_t GetPoint(uint16_t x,uint16_t y)
+
+
+uint16_t BSP_LCD_GetPoint(uint16_t x,uint16_t y)
 {
  	WriteComm(0x2a00);   
  	WriteData(x>>8);
@@ -723,6 +726,26 @@ uint16_t GetPoint(uint16_t x,uint16_t y)
 }
 
 /**********************************************
+函数名：Lcd块填充
+功能：选定Lcd上指定的矩形区域
+
+入口参数：xStart x方向的起始点
+          ySrart y方向的终止点
+          xEnd 
+          yEnd  
+返回值：无
+***********************************************/
+void BSP_LCD_FillRec(uint16_t xStart,uint16_t yStart,uint16_t xEnd,uint16_t yEnd,uint16_t Color)
+{
+	uint32_t temp;
+
+	BlockWrite(xStart,xEnd,yStart,yEnd);
+	for (temp=0; temp<(xEnd-xStart)*(yEnd-yStart); temp++)
+	{
+		*(__IO uint16_t *) (Bank1_LCD_D) = Color;
+	}
+}
+/**********************************************
 函数名：Lcd块选函数
 功能：选定Lcd上指定的矩形区域
 
@@ -744,6 +767,28 @@ void LCD_ColorBox(uint16_t xStart,uint16_t yStart,uint16_t xLong,uint16_t yLong,
 		*(__IO uint16_t *) (Bank1_LCD_D) = Color;
 	}
 }
+
+/******************************************
+函数名：Lcd图像填充
+功能：向Lcd指定位置填充图像
+入口参数：
+******************************************/
+void BSP_LCD_FillPic(uint16_t x, uint16_t y,uint16_t pic_H, uint16_t pic_V, uint16_t* pic)
+{
+  unsigned long i;
+//	unsigned int j;
+
+// 	WriteComm(0x3600); //Set_address_mode
+// 	WriteData(0x00); //横屏，从左下角开始，从左到右，从下到上
+	BlockWrite(x,x+pic_H-1,y,y+pic_V-1);
+	for (i = 0; i < pic_H*pic_V; i++)
+	{
+		*(__IO uint16_t *) (Bank1_LCD_D) = pic[i];
+	}
+// 	WriteComm(0x3600); //Set_address_mode
+// 	WriteData(0xA0);
+}
+
 
 /******************************************
 函数名：Lcd图像填充100*100

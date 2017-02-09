@@ -7,6 +7,7 @@ typedef struct
 {
 	uint16_t x; //CTP_X1
 	uint16_t y; //CTP_Y1
+	uint8_t pressed;
 }TOUCH_XY_Typedef;
 
 typedef struct 

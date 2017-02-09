@@ -1,6 +1,5 @@
 /*********************************************************************
-*          Portions COPYRIGHT 2015 STMicroelectronics                *
-*          Portions SEGGER Microcontroller GmbH & Co. KG             *
+*                SEGGER Microcontroller GmbH & Co. KG                *
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
@@ -10,7 +9,7 @@
 *                                                                    *
 **********************************************************************
 
-** emWin V5.28 - Graphical user interface for embedded applications **
+** emWin V5.32 - Graphical user interface for embedded applications **
 All  Intellectual Property rights  in the Software belongs to  SEGGER.
 emWin is protected by  international copyright laws.  Knowledge of the
 source code may not be used to write a similar product.  This file may
@@ -27,38 +26,21 @@ Full source code is available at: www.segger.com
 
 We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
+Licensing information
+
+Licensor:                 SEGGER Software GmbH
+Licensed to:              STMicroelectronics International NV
+Licensed SEGGER software: emWin
+License number:           GUI-00429
+License model:            Buyout SRC [Buyout Source Code License, signed November 29th 2012]
+Licensed product:         -
+Licensed platform:        STMs ARM Cortex-M based 32 BIT CPUs
+Licensed number of seats: -
+----------------------------------------------------------------------
 File        : GUIDEMO_VScreen.c
 Purpose     : Virtual screen demo
 ----------------------------------------------------------------------
 */
-
-/**
-  ******************************************************************************
-  * @file    GUIDEMO_VScreen.c
-  * @author  MCD Application Team
-  * @version V1.4.2
-  * @date    13-November-2015
-  * @brief   Virtual screen demo
-  ******************************************************************************
-  * @attention
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
-
-#include <stdlib.h>
 
 #include "GUIDEMO.h"
 
@@ -91,9 +73,13 @@ static int _Loop(int y, int d, int n, int Delay) {
 *       _DemoVScreen
 */
 static void _DemoVScreen(void) {
-  int xSize, ySize, j, n;
-  int _aDelay[] = { 20, 5};
   GUI_RECT Rect;
+  unsigned j;
+  int      xSize;
+  int      ySize;
+  int      n;
+  int      aDelay[] = { 20, 5 };
+
   xSize = LCD_GetXSize();
   ySize = LCD_GetYSize();
   GUI_SetFont(&GUI_FontComic24B_ASCII);
@@ -112,13 +98,13 @@ static void _DemoVScreen(void) {
   GUI_SetColor(GUI_DARKGREEN);
   GUI_DispStringInRect("Here is the virtual screen", &Rect, GUI_TA_HCENTER | GUI_TA_VCENTER);
   n = ySize / 5;
-  for (j = 0; j < GUI_COUNTOF(_aDelay); j++) {
-    if (_Loop(0, 5, n, _aDelay[j]) == 1) {
+  for (j = 0; j < GUI_COUNTOF(aDelay); j++) {
+    if (_Loop(0, 5, n, aDelay[j]) == 1) {
       return;
     }
     GUI_SetOrg(0, ySize);
     GUI_Delay(250);
-    if (_Loop(ySize, -5, n, _aDelay[j]) == 1) {
+    if (_Loop(ySize, -5, n, aDelay[j]) == 1) {
       return;
     }
     GUI_SetOrg(0, 0);
@@ -150,25 +136,26 @@ static void _DemoVScreen(void) {
 *       GUIDEMO_VScreen
 */
 void GUIDEMO_VScreen(void) {
-  int ySize, vySize;
+  int vySize;
+  int ySize;
 
   ySize  = LCD_GetYSize();
   vySize = LCD_GetVYSize();
-  if (vySize < (ySize << 1)) {
+  if (vySize < (ySize * 2)) {
+    GUIDEMO_ConfigureDemo("Virtual Screen", "Works only with a virtual screen with at least twice\nthe ySize of the display.Demo will be skipped...", GUIDEMO_SHOW_CURSOR | GUIDEMO_SHOW_INFO | GUIDEMO_SHOW_CONTROL);
     return;
   }
-  GUIDEMO_ShowIntro("VScreen demo",
-                    "Demonstrates how to use\n"
-                    "virtual screens");
-  GUIDEMO_DrawBk(1);
+  GUIDEMO_ConfigureDemo("Virtual Screen", "Demonstrates how to use\nvirtual screens", GUIDEMO_SHOW_CURSOR | GUIDEMO_SHOW_INFO | GUIDEMO_SHOW_CONTROL);
+  GUIDEMO_DrawBk();
   _DemoVScreen();
   GUI_SetOrg(0, 0);
 }
 
 #else
 
-void GUIDEMO_VScreen(void) {}
+void GUIDEMO_VScreen_C(void);
+void GUIDEMO_VScreen_C(void) {}
 
-#endif
+#endif  // SHOW_GUIDEMO_VSCREEN
 
 /*************************** End of file ****************************/

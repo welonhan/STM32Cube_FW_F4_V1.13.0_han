@@ -275,6 +275,8 @@ typedef struct
 }RC_DATA_TypeDef;
 
 
+void 				RC_TX_DataHandle(RC_DATA_TypeDef* rc_data);
+
 #endif /* __MAIN_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,6 +1,5 @@
 /*********************************************************************
-*          Portions COPYRIGHT 2015 STMicroelectronics                *
-*          Portions SEGGER Microcontroller GmbH & Co. KG             *
+*                SEGGER Microcontroller GmbH & Co. KG                *
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
@@ -10,7 +9,7 @@
 *                                                                    *
 **********************************************************************
 
-** emWin V5.28 - Graphical user interface for embedded applications **
+** emWin V5.32 - Graphical user interface for embedded applications **
 All  Intellectual Property rights  in the Software belongs to  SEGGER.
 emWin is protected by  international copyright laws.  Knowledge of the
 source code may not be used to write a similar product.  This file may
@@ -27,38 +26,23 @@ Full source code is available at: www.segger.com
 
 We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
+Licensing information
+
+Licensor:                 SEGGER Software GmbH
+Licensed to:              STMicroelectronics International NV
+Licensed SEGGER software: emWin
+License number:           GUI-00429
+License model:            Buyout SRC [Buyout Source Code License, signed November 29th 2012]
+Licensed product:         -
+Licensed platform:        STMs ARM Cortex-M based 32 BIT CPUs
+Licensed number of seats: -
+----------------------------------------------------------------------
 File        : GUIDEMO_Intro.c
 Purpose     : Introduction for emWin generic demo
               (This is also a good file to demo and explain basic
               emWin features by setting breakpoints)
 ----------------------------------------------------------------------
 */
-
-/**
-  ******************************************************************************
-  * @file    GUIDEMO_Intro.c
-  * @author  MCD Application Team
-  * @version V1.4.2
-  * @date    13-November-2015
-  * @brief   Introduction for emWin generic demo
-  ******************************************************************************
-  * @attention
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
 
 #include <string.h>
 
@@ -68,7 +52,7 @@ Purpose     : Introduction for emWin generic demo
 *
 *       Defines
 */
-#define SCREEN_DIV          6 // 2^6 = 64
+#define SCREEN_DIV          6  // 2^6 = 64
 
 #define FACTOR_EMWIN        4
 #define FACTOR_DESC        11
@@ -91,42 +75,42 @@ void GUIDEMO_Intro(void) {
 
   xSize   = LCD_GetXSize();
   ySize   = LCD_GetYSize();
-  xCenter = xSize >> 1;
-
-  GUIDEMO_DrawBk(0);
+  xCenter = xSize / 2;
+  GUIDEMO_DrawBk();
   GUI_SetTextMode(GUI_TM_TRANS);
   //
   // emWin
   //
   GUI_SetColor(GUI_WHITE);
   GUI_SetFont(&GUI_FontRounded22);
-  GUI_DispStringHCenterAt("STemWin", xCenter, (FACTOR_EMWIN * ySize) >> SCREEN_DIV);
+  GUI_DispStringHCenterAt("STemWin",                                                 xCenter, (FACTOR_EMWIN * ySize)     >> SCREEN_DIV);
   //
   // emWin description
   //
-  GUI_SetFont(&GUI_Font16_ASCII);
-  GUI_DispStringHCenterAt("Universal graphic software\nfor embedded applications", xCenter, (FACTOR_DESC * ySize) >> SCREEN_DIV);
+  GUI_SetFont(&GUI_FontSouvenir18);
+  GUI_DispStringHCenterAt("Universal graphic software\nfor embedded applications", xCenter, (FACTOR_DESC * ySize)      >> SCREEN_DIV);
   //
   // Any text
   //
+  GUI_SetFont(&GUI_Font16_ASCII);
   GUI_SetColor(0x2288ff);
   GUI_DispStringHCenterAt("For STM32 MCU Products - Cortex M3 - Cortex M4", xCenter, (FACTOR_ANY_COMP * ySize) >> SCREEN_DIV);
   //
   // Compiled
   //
   GUI_SetFont(&GUI_Font10S_ASCII);
-  GUI_DispStringHCenterAt("Compiled " __DATE__ " "__TIME__,          xCenter, ((FACTOR_ANY_COMP * ySize) >> SCREEN_DIV) + DIST_ANY_COMP);
+  GUI_DispStringHCenterAt("Compiled " __DATE__ " "__TIME__,                        xCenter, ((FACTOR_ANY_COMP * ySize) >> SCREEN_DIV) + DIST_ANY_COMP);
   //
   // Version
   //
   GUI_SetColor(GUI_WHITE);
-  GUI_SetFont(&GUI_Font16_ASCII);
+  GUI_SetFont(&GUI_FontSouvenir18);
   strcat(acVersion, GUI_GetVersionString());
-  GUI_DispStringHCenterAt(acVersion, xCenter,  (FACTOR_VERSION * ySize) >> SCREEN_DIV);
+  GUI_DispStringHCenterAt(acVersion,                                               xCenter,  (FACTOR_VERSION * ySize)  >> SCREEN_DIV);
   //
   // Logo
   //
-  GUI_DrawBitmap(&bmSTLogo, (xSize - bmSeggerLogo.XSize) >> 1, (FACTOR_LOGO * ySize) >> SCREEN_DIV);
+  GUI_DrawBitmap(&bmSTLogo, (xSize - bmSTLogo.XSize) >> 1, (FACTOR_LOGO * ySize) >> SCREEN_DIV);
   //
   // www.segger.com
   //

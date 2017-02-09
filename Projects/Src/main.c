@@ -22,6 +22,12 @@
 #include "sd_diskio.h"
 #include <stdio.h>
 
+
+/*GUI includes component */
+#include "GUI.h"
+#include "GUIApp.h"
+#include "DIALOG.h"
+
 /* TOUCH ---------------------------------------------------------------------*/
 I2C_HandleTypeDef I2cHandle;
 TOUCH_XY_Typedef TOUCH_Dat;
@@ -40,12 +46,19 @@ TIM_OC_InitTypeDef sConfig;
 
 /* ADC -----------------------------------------------------------------------*/
 ADC_HandleTypeDef  AdcHandle;
+uint32_t ADC_Bat_Num=0, ADC_Tmp_Num=0;
+uint8_t ADC_Count=0;
+
 
 /* FATFS ---------------------------------------------------------------------*/
 FATFS SDFatFs;  /* File system object for SD card logical drive */
 FIL MyFile;     /* File object */
 char SDPath[4]; /* SD card logical drive path */
 uint8_t duty=0;
+
+uint8_t GUI_Initialized   = 0;
+
+GUI_PID_STATE Touch_State;
 
 /* NRF24L01 ------------------------------------------------------------------*/
 #ifdef DEBUG_MODE
@@ -70,9 +83,14 @@ uint32_t 	*DMA_ADC_MEM_ADDR=(uint32_t *)&RC_DATA.ADC_DATA;
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Error_Handler(void);
-void 				RC_TX_DataHandle(RC_DATA_TypeDef* rc_data);
+
 void 				FATFS_Test(void);
 
+
+uint8_t DASH_BOARD[4]=
+{
+	180,180,180,180
+};
 
 /**
   * @brief  Main program
@@ -124,12 +142,27 @@ int main(void)
 	RC_DATA.ADC_StrMid=(uint16_t)(temp1/10);
 	RC_DATA.ADC_ThrtMid=(uint16_t)(temp2/10);
 
-	NRF24L01_check();
+	//NRF24L01_check();
 	
 	NRF24L01_Init();	
 	
 	//FATFS_Test();
 	
+	//STemWin need enable CRC
+	__HAL_RCC_CRC_CLK_ENABLE();
+	
+/* Activate the use of memory device feature */
+  //WM_SetCreateFlags(WM_CF_MEMDEV);
+  
+  /* Init the STemWin GUI Library */
+  GUI_Init();
+  
+  GUI_Initialized = 1;
+
+  /* Start Demo */
+  MainTask();
+	
+/*	
 	while(1)
 	{
 		//定时发送遥控数据，延时可根据需要修改
@@ -138,6 +171,7 @@ int main(void)
 		NRF24L01_TxPacket( (uint8_t *)&RC_DATA.RC_TX_Data	, NRF24L01_TX_NUM );
 		
 	}
+*/	
 }
 
 /**
@@ -312,16 +346,29 @@ static void SystemClock_Config(void)
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	uint8_t NRF24L01_IRQ_status,i;
+	uint8_t NRF24L01_IRQ_status;
   if(GPIO_Pin == TOUCH_INT_PIN)										//PB7 TOUCH INT
   {
+
     if(BSP_TOUCH_Read(TOUCH_Dat)==0)
-		{	BSP_LCD_DrawPixel(TOUCH_Dat.x, TOUCH_Dat.y, RED);
+		{	/*
+			BSP_LCD_DrawPixel(TOUCH_Dat.x, TOUCH_Dat.y, RED);
 			BSP_LCD_DrawPixel(TOUCH_Dat.x, TOUCH_Dat.y+1, RED);
 			BSP_LCD_DrawPixel(TOUCH_Dat.x+1, TOUCH_Dat.y, RED);
 			BSP_LCD_DrawPixel(TOUCH_Dat.x+1, TOUCH_Dat.y, RED);
-		}
+			
+			Touch_State.Layer=0;
+			Touch_State.x=TOUCH_Dat.x;
+			Touch_State.y=TOUCH_Dat.y;
+			Touch_State.Pressed=TOUCH_Dat.pressed;
+			GUI_PID_StoreState(&Touch_State);
+			*/
 			BSP_LED_Toggle(LED4);
+		}
+		else
+			Touch_State.Pressed=TOUCH_Dat.pressed;
+			
+		
   }
 	
 	if(GPIO_Pin == KEY_BUTTON_PIN)									//PA0 KEY INT
@@ -330,7 +377,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 #ifdef DEBUG_MODE		
 		NRF24L01_TxPacket( (uint8_t *)NRF24L01_TX_DATA, NRF24L01_TX_NUM );
-#endif
+
 
 		if (duty==0)
 		{	LCD_BACKLIGHT_PWM_50duty();
@@ -341,6 +388,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			LCD_BACKLIGHT_PWM_25duty();
 			duty=0;
 		}
+#endif		
   }
 	
 	if(GPIO_Pin == RF24L01_IRQ_GPIO_PIN)						//RF24L01 IRQ
@@ -401,8 +449,20 @@ void RC_TX_DataHandle(RC_DATA_TypeDef* rc_data)
 					
 		else
 			tmp=tmp;
-			rc_data->RC_TX_Data.CHANNEL1=100+tmp;
-		
+			rc_data->RC_TX_Data.CHANNEL1=100+tmp;		
+	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	//处理channel1 指示数据
+	if(rc_data->RC_TX_Data.CHANNEL1<=100)
+	{
+		tmp=(45*rc_data->RC_TX_Data.CHANNEL1)/100;
+		DASH_BOARD[0]=135+tmp;
+	}
+	else
+	{
+		tmp=(45*(rc_data->RC_TX_Data.CHANNEL1-100))/100;
+		DASH_BOARD[0]=180+tmp;
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -428,90 +488,42 @@ void RC_TX_DataHandle(RC_DATA_TypeDef* rc_data)
 			tmp=-tmp;
 		rc_data->RC_TX_Data.CHANNEL2=100+tmp;
 	}
+	///////////////////////////////////////////////////////////////////////////
+	//处理channel2 指示数据
+	if(rc_data->RC_TX_Data.CHANNEL2<100)
+	{
+		tmp=(45*rc_data->RC_TX_Data.CHANNEL2)/100;
+		DASH_BOARD[1]=135+tmp;
+	}
+	else
+	{
+		tmp=(45*(rc_data->RC_TX_Data.CHANNEL2-100))/100;
+		DASH_BOARD[1]=180+tmp;
+	}	
 	
 	//温度处理, 单位摄氏度
 	//(Vsense-V25)/Vslope+25, Vref=2890mV, Vsense=Vref*Adc>>12, V25=760mV, Vslope=2.5mV/C     
 	temp=(10*(((rc_data->ADC_DATA.ADC_TMP*2890)>>12)-760))/25+25;
-	rc_data->TX_TMP=temp;
+	ADC_Tmp_Num +=temp;
+
+	
 	
 	//电池电压处理，单位mV
 	//Vsense=Vref*Adc>>12, Vref=2890mV  
-	temp=(rc_data->ADC_DATA.ADC_BAT*2890)>>12;
-	rc_data->TX_BAT=temp;
+	temp=((rc_data->ADC_DATA.ADC_BAT*2890)>>12)*2;
+	ADC_Bat_Num+=temp;
+	
+	ADC_Count++;
+	if(ADC_Count==10)
+	{
+		rc_data->TX_BAT=(ADC_Bat_Num/ADC_Count);
+		rc_data->TX_TMP=(ADC_Tmp_Num/ADC_Count);
+		ADC_Count=0;
+		ADC_Bat_Num=0;
+		ADC_Tmp_Num=0;
+	}
 }
 
-#if 0
-void RC_TX_DataHandle(RC_DATA_TypeDef rc_data)
-{
-	uint8_t tmp;
-	//uint32_t temperature;
-	
-	/////////////////////////////////////////////////////////////////////////
-	//转向采样小于回中值，向左转
-	if(rc_data->ADC_StrMid>rc_data->ADC_DATA.ADC_STR)
-	{	
-		tmp=2*((rc_data->ADC_StrMid-rc_data->ADC_DATA.ADC_STR)/rc_data->ADC_StrMid);
-		if(tmp<=10){
-			rc_data->RC_TX_Data.CHANNEL1_Left=0;
-			rc_data->RC_TX_Data.CHANNEL1_Right=0;
-		}
-		else{ 
-			rc_data->RC_TX_Data.CHANNEL1_Left=tmp;
-			rc_data->RC_TX_Data.CHANNEL1_Right=0;
-		}
-	}
-	//转向采样大于回中值，向右转
-	else
-	{
-		tmp=2*((rc_data->ADC_DATA.ADC_STR-rc_data->ADC_StrMid)/(0xFFF-rc_data->ADC_StrMid));
-		if(tmp<=10){
-			rc_data->RC_TX_Data.CHANNEL1_Left=0;
-			rc_data->RC_TX_Data.CHANNEL1_Right=0;
-		}
-		else{ 
-			rc_data->RC_TX_Data.CHANNEL1_Left=0;
-			rc_data->RC_TX_Data.CHANNEL1_Right=tmp;
-		}
-	}
-	
-	///////////////////////////////////////////////////////////////////////////
-	//油门采样小于回中值，向前
-	if(rc_data->ADC_ThrtMid>rc_data->ADC_DATA.ADC_THRT)
-	{	
-		tmp=2*((rc_data->ADC_ThrtMid-rc_data->ADC_DATA.ADC_THRT)/rc_data->ADC_ThrtMid);
-		if(tmp<=10){
-			rc_data->RC_TX_Data.CHANNEL2_Forward=0;
-			rc_data->RC_TX_Data.CHANNEL2_Backward=0;
-		}
-		else{ 
-			rc_data->RC_TX_Data.CHANNEL2_Forward=tmp;
-			rc_data->RC_TX_Data.CHANNEL2_Backward=0;
-		}
-	}
-	//转向采样大于回中值，向后
-	else
-	{
-		tmp=2*((rc_data->ADC_DATA.ADC_THRT-rc_data->ADC_ThrtMid)/(0xFFF-rc_data->ADC_ThrtMid));
-		if(tmp<=10){
-			rc_data->RC_TX_Data.CHANNEL2_Forward=0;
-			rc_data->RC_TX_Data.CHANNEL2_Backward=0;
-		}
-		else{ 
-			rc_data->RC_TX_Data.CHANNEL2_Forward=0;
-			rc_data->RC_TX_Data.CHANNEL2_Backward=tmp;
-		}
-	}
-	
-	//温度处理, 单位摄氏度
-	//(Vsense-V25)/Vslope+25, Vref=2890mV, Vsense=Vref*Adc>>12, V25=760mV, Vslope=2.5mV/C     
-	rc_data->TX_TMP=(10*(((rc_data->ADC_DATA.ADC_TMP*2890)>>12)-760))/25+25;
-	
-	//电池电压处理，单位mV
-	//Vsense=Vref*Adc>>12, Vref=2890mV  
-	rc_data->TX_BAT=(rc_data->ADC_DATA.ADC_BAT*2890)>>12;
-	
-}
-#endif
 
 
 /**

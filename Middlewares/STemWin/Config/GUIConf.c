@@ -62,7 +62,7 @@ Purpose     : Display controller initialization
 //
 // Define the available number of bytes available for the GUI
 //
-#define GUI_NUMBYTES  (100*1024)
+#define GUI_NUMBYTES  (64*1024)
 
 /*********************************************************************
 *
@@ -91,6 +91,8 @@ void GUI_X_Config(void) {
   // Set default font
   //
   GUI_SetDefaultFont(GUI_FONT_6X8);
+	
+	
 }
 
 /*************************** End of file ****************************/

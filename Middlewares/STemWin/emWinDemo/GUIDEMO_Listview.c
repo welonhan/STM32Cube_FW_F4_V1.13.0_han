@@ -1,6 +1,5 @@
 /*********************************************************************
-*          Portions COPYRIGHT 2015 STMicroelectronics                *
-*          Portions SEGGER Microcontroller GmbH & Co. KG             *
+*                SEGGER Microcontroller GmbH & Co. KG                *
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
@@ -10,7 +9,7 @@
 *                                                                    *
 **********************************************************************
 
-** emWin V5.28 - Graphical user interface for embedded applications **
+** emWin V5.32 - Graphical user interface for embedded applications **
 All  Intellectual Property rights  in the Software belongs to  SEGGER.
 emWin is protected by  international copyright laws.  Knowledge of the
 source code may not be used to write a similar product.  This file may
@@ -27,44 +26,29 @@ Full source code is available at: www.segger.com
 
 We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
+Licensing information
+
+Licensor:                 SEGGER Software GmbH
+Licensed to:              STMicroelectronics International NV
+Licensed SEGGER software: emWin
+License number:           GUI-00429
+License model:            Buyout SRC [Buyout Source Code License, signed November 29th 2012]
+Licensed product:         -
+Licensed platform:        STMs ARM Cortex-M based 32 BIT CPUs
+Licensed number of seats: -
+----------------------------------------------------------------------
 File        : GUIDEMO_Listview.c
 Purpose     : Listview demo
 ----------------------------------------------------------------------
 */
 
-/**
-  ******************************************************************************
-  * @file    GUIDEMO_Listview.c
-  * @author  MCD Application Team
-  * @version V1.4.2
-  * @date    13-November-2015
-  * @brief   Listview demo
-  ******************************************************************************
-  * @attention
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
-
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
 #include "GUIDEMO.h"
 
 #if (SHOW_GUIDEMO_LISTVIEW && GUI_WINSUPPORT)
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*********************************************************************
 *
@@ -122,33 +106,33 @@ typedef struct {
 *       _pNames
 */
 static const char * _pNames[] = {
-  "Adina", "Adis", "Aimee", "Alea", "Alessio", "Aletta", "Alexia", "Alissa", "Amelia", 
-  "Anakin", "Ania", "Ankea", "Annalies", "Annina", "Annrike", "Arkadius", "Arvin", 
-  "Aurelia", "Ava", "Beeke", "Benita", "Bennit", "Bent", "Berenike", "Berit", "Birk", 
-  "Bosse", "Carsta", "Catalina", "Celia", "Charis", "Charlin", "Charlotta", "Cordelia", 
-  "Corey", "Cornelis", "Corvin", "Cosima", "Crisula", "Darian", "Darina", "Deik", "Derek", 
-  "Destina", "Devin", "Diane", "Dina", "Dion", "Dorette", "Dorle", "Duncan", "Eddy", 
-  "Einar", "Elea", "Elin", "Elita", "Elona", "Elouise", "Emilian", "Emina", "Emmeline", 
-  "Enna", "Estelle", "Etta", "Fabiola", "Fabrice", "Falko", "Felice", "Feline", "Femke", 
-  "Fiete", "Filippa", "Fine", "Finia", "Finley", "Fleur", "Florentine" "Florenz", "Florin", 
-  "Floyd", "Fokko", "Fritzi", "Gero", "Gerret", "Gerwin", "Gideon", "Gillian", "Glen", 
-  "Gunilla", "Hanka", "Heinke", "Helmar", "Henner", "Hennes", "Henrieke", "Immo", 
-  "India", "Isalie", "Iven", "Jade", "Janice", "Janika", "Janka", "Janneke", "Jannika", 
-  "Jano", "Jarla", "Jarne", "Jarno", "Jaromir", "Jaron", "Jelana", "Jesper", "Joleen", "Jolie", 
-  "Jonte", "Joost", "Jördis", "Joris", "Josie", "Josina", "Jula", "Julina", "Jytte", "Kalle", 
-  "Kennet", "Keno", "Kiana", "Kieran", "Laila", "Laureen", "Laurens", "Laurent", 
-  "Lauritz", "Leana", "Leandra", "Leandro", "Len", "Lenore", "Leona", "Leonore", 
-  "Levke", "Lewin", "Lientje", "Lilith", "Line", "Linna", "Linnea", "Lisanne", "Livia", 
-  "Lorena", "Lorna", "Lovis", "Luana", "Ludger", "Madita", "Mads", "Maiga", "Mailin", 
-  "Malina", "Manja", "Marieke", "Marielle", "Mariette", "Mariola", "Marla", "Marlena", 
-  "Marlin", "Marlo", "Marthe", "Martje", "Matz", "Maureen", "Mayra", "Medina", 
-  "Melda", "Melek", "Melike", "Melinda", "Melis", "Melisa", "Merit", "Mieke", "Mila", 
-  "Mina", "Mio", "Mirella", "Momke", "Momme", "Morris", "Nantke", "Nelson", "Nika", 
-  "Norwin", "Oke", "Onno", "Otis", "Ove", "Peer", "Pelle", "Philine", "Philomena", 
-  "Quentin", "Quint", "Rahel", "Raik", "Riana", "Ricardo", "Rika", "Rixa", "Rolex", 
-  "Ruwen", "Ryan", "Salma", "Sandrine", "Severin", "Sidonie", "Silas", "Silja", "Simeon", 
-  "Sinja", "Smilla", "Stig", "Stine", "Talisa", "Tamina", "Tammo", "Tara", "Thyra", 
-  "Tiana", "Tjalf", "Tjark", "Tjelle", "Tjorben", "Tomma", "Tore", "Vanity", "Violet", 
+  "Adina", "Adis", "Aimee", "Alea", "Alessio", "Aletta", "Alexia", "Alissa", "Amelia",
+  "Anakin", "Ania", "Ankea", "Annalies", "Annina", "Annrike", "Arkadius", "Arvin",
+  "Aurelia", "Ava", "Beeke", "Benita", "Bennit", "Bent", "Berenike", "Berit", "Birk",
+  "Bosse", "Carsta", "Catalina", "Celia", "Charis", "Charlin", "Charlotta", "Cordelia",
+  "Corey", "Cornelis", "Corvin", "Cosima", "Crisula", "Darian", "Darina", "Deik", "Derek",
+  "Destina", "Devin", "Diane", "Dina", "Dion", "Dorette", "Dorle", "Duncan", "Eddy",
+  "Einar", "Elea", "Elin", "Elita", "Elona", "Elouise", "Emilian", "Emina", "Emmeline",
+  "Enna", "Estelle", "Etta", "Fabiola", "Fabrice", "Falko", "Felice", "Feline", "Femke",
+  "Fiete", "Filippa", "Fine", "Finia", "Finley", "Fleur", "Florentine", "Florenz", "Florin",
+  "Floyd", "Fokko", "Fritzi", "Gero", "Gerret", "Gerwin", "Gideon", "Gillian", "Glen",
+  "Gunilla", "Hanka", "Heinke", "Helmar", "Henner", "Hennes", "Henrieke", "Immo",
+  "India", "Isalie", "Iven", "Jade", "Janice", "Janika", "Janka", "Janneke", "Jannika",
+  "Jano", "Jarla", "Jarne", "Jarno", "Jaromir", "Jaron", "Jelana", "Jesper", "Joleen", "Jolie",
+  "Jonte", "Joost", "Jördis", "Joris", "Josie", "Josina", "Jula", "Julina", "Jytte", "Kalle",
+  "Kennet", "Keno", "Kiana", "Kieran", "Laila", "Laureen", "Laurens", "Laurent",
+  "Lauritz", "Leana", "Leandra", "Leandro", "Len", "Lenore", "Leona", "Leonore",
+  "Levke", "Lewin", "Lientje", "Lilith", "Line", "Linna", "Linnea", "Lisanne", "Livia",
+  "Lorena", "Lorna", "Lovis", "Luana", "Ludger", "Madita", "Mads", "Maiga", "Mailin",
+  "Malina", "Manja", "Marieke", "Marielle", "Mariette", "Mariola", "Marla", "Marlena",
+  "Marlin", "Marlo", "Marthe", "Martje", "Matz", "Maureen", "Mayra", "Medina",
+  "Melda", "Melek", "Melike", "Melinda", "Melis", "Melisa", "Merit", "Mieke", "Mila",
+  "Mina", "Mio", "Mirella", "Momke", "Momme", "Morris", "Nantke", "Nelson", "Nika",
+  "Norwin", "Oke", "Onno", "Otis", "Ove", "Peer", "Pelle", "Philine", "Philomena",
+  "Quentin", "Quint", "Rahel", "Raik", "Riana", "Ricardo", "Rika", "Rixa", "Rolex",
+  "Ruwen", "Ryan", "Salma", "Sandrine", "Severin", "Sidonie", "Silas", "Silja", "Simeon",
+  "Sinja", "Smilla", "Stig", "Stine", "Talisa", "Tamina", "Tammo", "Tara", "Thyra",
+  "Tiana", "Tjalf", "Tjark", "Tjelle", "Tjorben", "Tomma", "Tore", "Vanity", "Violet",
   "Violetta", "Wilko", "Wulf", "Yasmina", "Ylvie", "Younes", "Yves", "Yvette",
 };
 
@@ -207,12 +191,12 @@ static const ACTION_ITEM _aAction[] = {
 *       _aColor
 */
 static const GUI_COLOR _aColor[] = {
-  GUI_BLUE        , GUI_GREEN       , GUI_RED         , GUI_CYAN        , 
-  GUI_MAGENTA     , GUI_YELLOW      , GUI_LIGHTBLUE   , GUI_LIGHTGREEN  , 
-  GUI_LIGHTRED    , GUI_LIGHTCYAN   , GUI_LIGHTMAGENTA, GUI_LIGHTYELLOW , 
-  GUI_DARKBLUE    , GUI_DARKGREEN   , GUI_DARKRED     , GUI_DARKCYAN    , 
-  GUI_DARKMAGENTA , GUI_DARKYELLOW  , GUI_WHITE       , GUI_LIGHTGRAY   , 
-  GUI_GRAY        , GUI_DARKGRAY    , GUI_BLACK       , GUI_BROWN       , 
+  GUI_BLUE        , GUI_GREEN       , GUI_RED         , GUI_CYAN        ,
+  GUI_MAGENTA     , GUI_YELLOW      , GUI_LIGHTBLUE   , GUI_LIGHTGREEN  ,
+  GUI_LIGHTRED    , GUI_LIGHTCYAN   , GUI_LIGHTMAGENTA, GUI_LIGHTYELLOW ,
+  GUI_DARKBLUE    , GUI_DARKGREEN   , GUI_DARKRED     , GUI_DARKCYAN    ,
+  GUI_DARKMAGENTA , GUI_DARKYELLOW  , GUI_WHITE       , GUI_LIGHTGRAY   ,
+  GUI_GRAY        , GUI_DARKGRAY    , GUI_BLACK       , GUI_BROWN       ,
 };
 
 /*********************************************************************
@@ -233,14 +217,15 @@ static const GUI_COLOR _aColor[] = {
 *   Insert - 1 for inserting a row,0 for adding a row
 */
 static int _AddRow(WM_HWIN hItem, int Insert) {
-  int    i, r;
-  char * pText[3];
-  char   acText[3][20] = {{0}};
+  const char * pText[3];
+  char   acText[3][20] = {{ 0 }};
+  int    i;
+  int    r;
 
   //
   // Create name field
   //
-  i = rand() % GUI_COUNTOF(_pNames);
+  i = (unsigned)rand() % GUI_COUNTOF(_pNames);
   strcpy(acText[0], _pNames[i]);
   //
   // Create code field
@@ -263,9 +248,9 @@ static int _AddRow(WM_HWIN hItem, int Insert) {
   // Add/Insert row
   //
   if (Insert) {
-    r = LISTVIEW_InsertRow(hItem, 0, (const GUI_ConstString *)pText);
+    r = LISTVIEW_InsertRow(hItem, 0, (const GUI_ConstString * )&pText);
   } else {
-    r = LISTVIEW_AddRow(hItem, (const GUI_ConstString *)pText);
+    r = LISTVIEW_AddRow(hItem, (const GUI_ConstString * )&pText);
   }
   return r;
 }
@@ -302,16 +287,17 @@ static void _InitListview(WM_HWIN hList) {
 static void _Action(WM_HWIN hList) {
   unsigned ColoredCol   = 0;
   unsigned ColoredRow   = 0;
-  unsigned i, NumRows;
+  unsigned NumRows;
+  unsigned Index;
+  unsigned i;
+  int      SortedColumn = -1;
   int      ColorIndex   = 0;
   int      Reverse      = 0;
-  int      SortedColumn = -1;
-  int      Index;
 
   Index = 0;
   do {
     if (_aAction[Index].pDescription) {
-      GUIDEMO_ShowInfo(_aAction[Index].pDescription);
+      GUIDEMO_SetInfoText(_aAction[Index].pDescription);
     }
     switch (_aAction[Index].Job) {
     case JOB_COLOR:
@@ -366,17 +352,20 @@ static void _Action(WM_HWIN hList) {
 */
 static void _DemoListview(void) {
   WM_HWIN hList;
-  int     xSize, ySize, xSpace, ySpace;
+  int     xSpace;
+  int     ySpace;
+  int     xSize;
+  int     ySize;
 
   xSize  = LCD_GetXSize();
   ySize  = LCD_GetYSize();
-  if ((CONTROL_SIZE_X + MIN_SPACE) < ((xSize - LISTVIEW_SIZE_X) >> 1)) {
-    xSpace = (xSize - LISTVIEW_SIZE_X) >> 1;
+  if ((CONTROL_SIZE_X + MIN_SPACE) < ((xSize - LISTVIEW_SIZE_X) / 2)) {
+    xSpace = (xSize - LISTVIEW_SIZE_X) / 2;
   } else {
-    xSpace = (xSize - LISTVIEW_SIZE_X - CONTROL_SIZE_X) >> 1;
+    xSpace = (xSize - LISTVIEW_SIZE_X - CONTROL_SIZE_X) / 2;
   }
-  ySpace = (ySize - INFO_SIZE_Y) >> 3;
-  hList  = LISTVIEW_CreateEx(xSpace, INFO_SIZE_Y + ySpace, LISTVIEW_SIZE_X, ySize - INFO_SIZE_Y - (ySpace << 1), WM_HBKWIN, WM_CF_SHOW, 0, GUI_ID_LISTVIEW0);
+  ySpace = (ySize - INFO_SIZE_Y) / 8;
+  hList  = LISTVIEW_CreateEx(xSpace, INFO_SIZE_Y + ySpace, LISTVIEW_SIZE_X, ySize - INFO_SIZE_Y - (ySpace * 2), WM_HBKWIN, WM_CF_SHOW, 0, GUI_ID_LISTVIEW0);
   WM_SetFocus(hList);
   _InitListview(hList);
   _Action(hList);
@@ -394,18 +383,16 @@ static void _DemoListview(void) {
 *       GUIDEMO_Listview
 */
 void GUIDEMO_Listview(void) {
-  GUIDEMO_ShowIntro("Listview demo",
-                    "Shows some features of\n"
-                    "the LISTVEW widget");
-  GUIDEMO_DrawBk(1);
-  GUIDEMO_ShowInfoWin();
+  GUIDEMO_ConfigureDemo("Listview widget", "Shows some features of\nthe LISTVEW widget", GUIDEMO_SHOW_CURSOR | GUIDEMO_SHOW_INFO | GUIDEMO_SHOW_CONTROL);
+  GUIDEMO_DrawBk();
   _DemoListview();
 }
 
 #else
 
-void GUIDEMO_Listview(void) {}
+void GUIDEMO_Listview_C(void);
+void GUIDEMO_Listview_C(void) {}
 
-#endif
+#endif  // SHOW_GUIDEMO_LISTVIEW && GUI_WINSUPPORT
 
 /*************************** End of file ****************************/

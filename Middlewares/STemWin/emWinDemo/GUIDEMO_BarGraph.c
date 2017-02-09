@@ -1,6 +1,5 @@
 /*********************************************************************
-*          Portions COPYRIGHT 2015 STMicroelectronics                *
-*          Portions SEGGER Microcontroller GmbH & Co. KG             *
+*                SEGGER Microcontroller GmbH & Co. KG                *
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
@@ -10,7 +9,7 @@
 *                                                                    *
 **********************************************************************
 
-** emWin V5.28 - Graphical user interface for embedded applications **
+** emWin V5.32 - Graphical user interface for embedded applications **
 All  Intellectual Property rights  in the Software belongs to  SEGGER.
 emWin is protected by  international copyright laws.  Knowledge of the
 source code may not be used to write a similar product.  This file may
@@ -27,36 +26,21 @@ Full source code is available at: www.segger.com
 
 We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
+Licensing information
+
+Licensor:                 SEGGER Software GmbH
+Licensed to:              STMicroelectronics International NV
+Licensed SEGGER software: emWin
+License number:           GUI-00429
+License model:            Buyout SRC [Buyout Source Code License, signed November 29th 2012]
+Licensed product:         -
+Licensed platform:        STMs ARM Cortex-M based 32 BIT CPUs
+Licensed number of seats: -
+----------------------------------------------------------------------
 File        : GUIDEMO_Bargraph.c
 Purpose     : Shows a bargraph with alpha effect
 ----------------------------------------------------------------------
 */
-
-/**
-  ******************************************************************************
-  * @file    GUIDEMO_Bargraph.c
-  * @author  MCD Application Team
-  * @version V1.4.2
-  * @date    13-November-2015
-  * @brief   Shows a bargraph with alpha effect
-  ******************************************************************************
-  * @attention
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
 
 #include "GUI.h"
 #include "GUIDEMO.h"
@@ -241,6 +225,22 @@ GUI_CONST_STORAGE GUI_FONT GUI_FontD9_AA4 = {
 *       Alpha bitmap for the orange dot at the left of the diagramm
 */
 static GUI_CONST_STORAGE unsigned long _acCircleOrange_14x14[] = {
+#if (GUI_USE_ARGB)
+  0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 0x05F39400, 0x79F39400, 0x86F39400, 0xEBF39400, 0xEBF39400, 0x86F39400, 0x79F39400, 0x05F39400, 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF,
+  0x00FFFFFF, 0x00FFFFFF, 0x46F39400, 0xBAF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xBAF39400, 0x46F39400, 0x00FFFFFF, 0x00FFFFFF,
+  0x00FFFFFF, 0x03F39400, 0xFAF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFAF39400, 0x03F39400, 0x00FFFFFF,
+  0x0EF39400, 0xC1F39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xC1F39400, 0x0EF39400,
+  0x78F39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0x78F39400,
+  0x89F39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0x89F39400,
+  0xEBF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xEBF39400,
+  0xEBF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xEBF39400,
+  0x89F39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0x89F39400,
+  0x78F39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0x78F39400,
+  0x0EF39400, 0xC1F39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xC1F39400, 0x0EF39400,
+  0x00FFFFFF, 0x03F39400, 0xFAF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFAF39400, 0x03F39400, 0x00FFFFFF,
+  0x00FFFFFF, 0x00FFFFFF, 0x46F39400, 0xBAF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xFFF39400, 0xBAF39400, 0x46F39400, 0x00FFFFFF, 0x00FFFFFF,
+  0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 0x05F39400, 0x79F39400, 0x86F39400, 0xEBF39400, 0xEBF39400, 0x86F39400, 0x79F39400, 0x05F39400, 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF,
+#else
   0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFA0094F3, 0x860094F3, 0x790094F3, 0x140094F3, 0x140094F3, 0x790094F3, 0x860094F3, 0xFA0094F3, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
   0xFFFFFFFF, 0xFFFFFFFF, 0xB90094F3, 0x450094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x450094F3, 0xB90094F3, 0xFFFFFFFF, 0xFFFFFFFF,
   0xFFFFFFFF, 0xC10094F3, 0x050094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x050094F3, 0xC10094F3, 0xFFFFFFFF,
@@ -255,16 +255,21 @@ static GUI_CONST_STORAGE unsigned long _acCircleOrange_14x14[] = {
   0xFFFFFFFF, 0xC10094F3, 0x050094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x050094F3, 0xC10094F3, 0xFFFFFFFF,
   0xFFFFFFFF, 0xFFFFFFFF, 0xB90094F3, 0x450094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x000094F3, 0x450094F3, 0xB90094F3, 0xFFFFFFFF, 0xFFFFFFFF,
   0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFA0094F3, 0x860094F3, 0x790094F3, 0x140094F3, 0x140094F3, 0x790094F3, 0x860094F3, 0xFA0094F3, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
+#endif
 };
 
 static GUI_CONST_STORAGE GUI_BITMAP _bmCircleOrange_14x14 = {
-  14, /* XSize */
-  14, /* YSize */
-  56, /* BytesPerLine */
-  32, /* BitsPerPixel */
-  (unsigned char *)_acCircleOrange_14x14,  /* Pointer to picture data */
-  NULL  /* Pointer to palette */
+  14, // XSize
+  14, // YSize
+  56, // BytesPerLine
+  32, // BitsPerPixel
+  (unsigned char *)_acCircleOrange_14x14,  // Pointer to picture data
+  NULL  // Pointer to palette
+#if (GUI_USE_ARGB)
+ ,GUI_DRAW_BMPM8888I
+#else
  ,GUI_DRAW_BMP8888
+#endif
 };
 
 /*********************************************************************
@@ -272,21 +277,39 @@ static GUI_CONST_STORAGE GUI_BITMAP _bmCircleOrange_14x14 = {
 *       Bitmaps for drawing the bars
 */
 static GUI_CONST_STORAGE GUI_COLOR ColorsBarOrange_12x1[] = {
-     0x2268E2,0x3785EC,0x509FEF,0x4B97F1
-    ,0x63B1F3,0x69B5F3,0x71B9F5,0x7BBDF7
-    ,0x86C4F8,0x8DC8FA,0xBADEFC,0xD5E9FE
+#if (GUI_USE_ARGB)
+  0xFFE26822,0xFFEC8537,0xFFEF9F50,0xFFF1974B,
+  0xFFF3B163,0xFFF3B569,0xFFF5B971,0xFFF7BD7B,
+  0xFFF8C486,0xFFFAC88D,0xFFFCDEBA,0xFFFEE9D5,
+#else
+  0x2268E2,0x3785EC,0x509FEF,0x4B97F1,
+  0x63B1F3,0x69B5F3,0x71B9F5,0x7BBDF7,
+  0x86C4F8,0x8DC8FA,0xBADEFC,0xD5E9FE,
+#endif
 };
 
 static GUI_CONST_STORAGE GUI_COLOR ColorsBarBluegreen_12x1[] = {
-     0x746E2D,0x918F3E,0x959041,0x979147
-    ,0x9B9650,0xA19C5E,0xA9A56D,0xB2B182
-    ,0xBFBE98,0xC3C29A,0xCFCFB3,0xE1E3D4
+#if (GUI_USE_ARGB)
+  0xFF2D6E74,0xFF3E8F91,0xFF419095,0xFF479197,
+  0xFF50969B,0xFF5E9CA1,0xFF6DA5A9,0xFF82B1B2,
+  0xFF98BEBF,0xFF9AC2C3,0xFFB3CFCF,0xFFD4E3E1,
+#else
+  0x746E2D,0x918F3E,0x959041,0x979147,
+  0x9B9650,0xA19C5E,0xA9A56D,0xB2B182,
+  0xBFBE98,0xC3C29A,0xCFCFB3,0xE1E3D4,
+#endif
 };
 
 static GUI_CONST_STORAGE GUI_COLOR ColorsBarBlue_12x1[] = {
-     0x825100,0xC3942C,0xCE953F,0xCD964A
-    ,0xCF9B56,0xD4A465,0xDAAD76,0xE0B986
-    ,0xE4C496,0xEBD1A7,0xEAD1A8,0xF4E1BF
+#if (GUI_USE_ARGB)
+  0xFF005182,0xFF2C94C3,0xFF3F95CE,0xFF4A96CD,
+  0xFF569BCF,0xFF65A4D4,0xFF76ADDA,0xFF86B9E0,
+  0xFF96C4E4,0xFFA7D1EB,0xFFA8D1EA,0xFFBFE1F4,
+#else
+  0x825100,0xC3942C,0xCE953F,0xCD964A,
+  0xCF9B56,0xD4A465,0xDAAD76,0xE0B986,
+  0xE4C496,0xEBD1A7,0xEAD1A8,0xF4E1BF,
+#endif
 };
 
 static GUI_CONST_STORAGE GUI_LOGPALETTE PalBarOrange_12x1 = {
@@ -358,9 +381,16 @@ static GUI_CONST_STORAGE GUI_BITMAP * _apBmBar[] = {
 *
 **********************************************************************
 */
+/*********************************************************************
+*
+*       _DrawLabel
+*/
 static void _DrawLabel(GUI_MEMDEV_Handle hMem, int xPos, int yPos) {
   GUI_MEMDEV_Handle hMemOld;
-  int               FontSizeY, i, x0, y0;
+  int               FontSizeY;
+  int               x0;
+  int               y0;
+  int               i;
 
   hMemOld = GUI_MEMDEV_Select(hMem);
   GUI_SetFont(&GUI_FontD9_AA4);
@@ -369,7 +399,6 @@ static void _DrawLabel(GUI_MEMDEV_Handle hMem, int xPos, int yPos) {
   for (i = 0; i < 5; i++) {
     x0 = xPos - 7;
     y0 = yPos + 96 - i * 20 - 7;
-    //GUI_ClearRect(x0, y0, x0 + 6, y0 + 13);
     GUI_DrawBitmap(&_bmCircleOrange_14x14, x0, y0);
     GUI_GotoXY(x0 + 7, y0 + 7 - FontSizeY / 2);
     GUI_SetTextAlign(GUI_TA_HCENTER);
@@ -379,7 +408,6 @@ static void _DrawLabel(GUI_MEMDEV_Handle hMem, int xPos, int yPos) {
   GUI_MEMDEV_Select(hMemOld);
 }
 
-
 /*********************************************************************
 *
 *       _DrawDiagramAt
@@ -387,18 +415,20 @@ static void _DrawLabel(GUI_MEMDEV_Handle hMem, int xPos, int yPos) {
 static void _DrawDiagramAt(GUI_MEMDEV_Handle hMem, int xPos, int yPos, int * py, int xBlend) {
   GUI_MEMDEV_Handle hMemOld;
   GUI_RECT          Rect;
-  int               i, ySizeBar, IndexBmBar;
+  int               IndexBmBar;
+  int               ySizeBar;
+  int               i;
 
   hMemOld = GUI_MEMDEV_Select(hMem);
   //
   // Draw blue background
   //
-  GUI_SetColor(0x4a2210);
+  GUI_SetColor(GUI_MAKE_COLOR(0x4a2210));
   GUI_FillRoundedRect(xPos, yPos, xPos + GRAPH_WIDTH, yPos + GRAPH_HEIGHT, 4);
   //
   // Draw grid lines
   //
-  GUI_SetColor(0x774830);
+  GUI_SetColor(GUI_MAKE_COLOR(0x774830));
   for (i = 0; i < 12; i++) {
     GUI_DrawHLine(yPos + 6 + i * 10, xPos + 2, xPos + GRAPH_WIDTH - 2);
   }
@@ -418,16 +448,16 @@ static void _DrawDiagramAt(GUI_MEMDEV_Handle hMem, int xPos, int yPos, int * py,
   Rect.y0 = yPos;
   Rect.y1 = yPos + GRAPH_HEIGHT;
   GUI_SetClipRect(&Rect);
-  GUI_SetColor(0xd99100);
-  GUI_SetAlpha(168);
+  GUI_SetColor(GUI_MAKE_COLOR(0xd99100));
+  GUI_SetAlpha(GUI_MAKE_TRANS(168));
   GUI_FillRoundedRect(xPos, yPos, xPos + GRAPH_WIDTH, yPos + GRAPH_HEIGHT, 4);
   GUI_SetClipRect(NULL);
   GUI_FillRect(xPos + 4, yPos + 1, xPos + xBlend, yPos + GRAPH_HEIGHT - 1);
-  GUI_SetAlpha(0);
+  GUI_SetAlpha(GUI_MAKE_TRANS(0));
   //
   // Draw orange frame
   //
-  GUI_SetColor(0x0094f3);
+  GUI_SetColor(GUI_MAKE_COLOR(0x0094f3));
   GUI_DrawRoundedRect(xPos, yPos, xPos + GRAPH_WIDTH, yPos + GRAPH_HEIGHT, 4);
   //
   // Label
@@ -443,36 +473,40 @@ static void _DrawDiagramAt(GUI_MEMDEV_Handle hMem, int xPos, int yPos, int * py,
 */
 static void _DemoBarGraph(void) {
   GUI_MEMDEV_Handle hMem;
-  int xSize, ySize, xPosGraph, yPosGraph, yPosText, i;
-  int ayOrg[] = {10, 20, 40, 50, 90, 100, 80, 30, 20, 10};
-  int ayCur[] = {10, 20, 40, 50, 90, 100, 80, 30, 20, 10};
-  int aAdd[GUI_COUNTOF(ayOrg)];
-  int AddBlend = 1;
-  int Blend = 64;
-  int NumItems = GUI_COUNTOF(ayOrg);
-  int TimeStart, TimeDiff, TimeStep;
-  int NextState;
+  int               ayOrg[] = { 10, 20, 40, 50, 90, 100, 80, 30, 20, 10 };
+  int               ayCur[] = { 10, 20, 40, 50, 90, 100, 80, 30, 20, 10 };
+  int               aAdd[GUI_COUNTOF(ayOrg)];
+  int               NextState;
+  int               TimeStart;
+  int               xPosGraph;
+  int               yPosGraph;
+  int               AddBlend;
+  int               NumItems;
+  int               TimeDiff;
+  int               TimeStep;
+  int               Blend;
+  int               xSize;
+  int               ySize;
+  int               i;
 
   //
-  // Calculate positions
+  // Initialize values; 
   //
+  AddBlend  = 1;
+  Blend     = 64;
+  NumItems  = GUI_COUNTOF(ayOrg);
   xSize     = LCD_GetXSize();
   ySize     = LCD_GetYSize();
-  xPosGraph = (xSize - GRAPH_WIDTH)  >> 1;
-  yPosGraph = (ySize - GRAPH_HEIGHT) >> 1;
+  xPosGraph = (xSize - GRAPH_WIDTH)  / 2;
+  yPosGraph = (ySize - GRAPH_HEIGHT) / 2;
   //
-  // Label demo
-  //
-  GUI_SetFont(&GUI_FontRounded22);
-  yPosText = LOGO_DIST_BORDER + ((bmSTLogo70x35.YSize - GUI_GetFontSizeY()) >> 1);
-  GUI_DispStringHCenterAt("STemWin bargraph demo", (xSize + bmSTLogo70x35.XSize) >> 1, yPosText);
-  //
-  // Initialize values; Create MEMDEV
+  // Create MEMDEV
   //
   hMem = GUI_MEMDEV_Create(xPosGraph, yPosGraph, GRAPH_WIDTH + 7 + 1, GRAPH_HEIGHT + 1);
   if (hMem == 0) {
     return;
   }
+  GUI_MEMDEV_CopyFromLCD(hMem);
   for (i = 0; i < NumItems; i++) {
     aAdd[i] = (i & 1) * 2 - 1;
   }
@@ -480,27 +514,18 @@ static void _DemoBarGraph(void) {
   TimeStart = GUIDEMO_GetTime();
   do {
     TimeDiff = GUIDEMO_GetTime() - TimeStart;
-    //
-    // Draw diagram
-    //
     _DrawDiagramAt(hMem, xPosGraph, yPosGraph, ayCur, Blend);
-    //
-    // Change blending area
-    //
     Blend += AddBlend;
     if ((Blend >= 164) || (Blend <= 8)) {
       AddBlend = -AddBlend;
     }
-    //
-    // Change values
-    //
     for (i = 0; i < NumItems; i++) {
       *(ayCur + i) += *(aAdd + i);
       if ((*(ayCur + i) > (*(ayOrg + i) + 10)) || (*(ayCur + i) < (*(ayOrg + i) - 10))) {
         *(aAdd + i) = -*(aAdd + i);
       }
     }
-    TimeStep  = GUIDEMO_GetTime() - TimeStart;
+    TimeStep = GUIDEMO_GetTime() - TimeStart;
     if ((TimeStep - TimeDiff) < TIME_STEP) {
       GUI_Delay(TIME_STEP - (TimeStep - TimeDiff));
     } else {
@@ -522,23 +547,17 @@ static void _DemoBarGraph(void) {
 *       GUIDEMO_BarGraph
 */
 void GUIDEMO_BarGraph(void) {
-  GUIDEMO_ShowIntro("Bar Graph",
-                    "Animated bar graph");
-  GUIDEMO_DrawBk(1);
-#if GUI_SUPPORT_CURSOR
-  GUI_CURSOR_Hide();
-#endif
+  GUIDEMO_ConfigureDemo("Bar Graph", "Animated bar graph\nusing Alpha Blending.", GUIDEMO_SHOW_CURSOR | GUIDEMO_SHOW_CONTROL);
+  GUIDEMO_DrawBk();
+  GUIDEMO_DispTitle("Bargraph demo");
   _DemoBarGraph();
-#if GUI_SUPPORT_CURSOR
-  GUI_CURSOR_Show();
-#endif
 }
 
 #else
 
-void GUIDEMO_BarGraph(void) {}
+void GUIDEMO_BarGraph_C(void);
+void GUIDEMO_BarGraph_C(void) {}
 
-#endif
+#endif  // SHOW_GUIDEMO_BARGRAPH && GUI_SUPPORT_MEMDEV
 
 /*************************** End of file ****************************/
-

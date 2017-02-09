@@ -30,11 +30,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h" 
 #include "stm32f4_discovery_sd.h"
+#include "GUI.h"
 
 extern UART_HandleTypeDef 	UartHandle;
 extern I2C_HandleTypeDef 		I2cHandle;
 extern ADC_HandleTypeDef    AdcHandle;
 
+extern volatile GUI_TIMER_TIME OS_TimeMS;
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -141,7 +143,8 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-  HAL_IncTick(); 
+	OS_TimeMS++;
+	HAL_IncTick(); 
 }
 
 /******************************************************************************/

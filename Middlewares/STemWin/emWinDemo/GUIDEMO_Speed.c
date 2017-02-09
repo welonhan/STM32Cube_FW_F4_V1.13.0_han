@@ -1,6 +1,5 @@
 /*********************************************************************
-*          Portions COPYRIGHT 2015 STMicroelectronics                *
-*          Portions SEGGER Microcontroller GmbH & Co. KG             *
+*                SEGGER Microcontroller GmbH & Co. KG                *
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
@@ -10,7 +9,7 @@
 *                                                                    *
 **********************************************************************
 
-** emWin V5.28 - Graphical user interface for embedded applications **
+** emWin V5.32 - Graphical user interface for embedded applications **
 All  Intellectual Property rights  in the Software belongs to  SEGGER.
 emWin is protected by  international copyright laws.  Knowledge of the
 source code may not be used to write a similar product.  This file may
@@ -27,42 +26,27 @@ Full source code is available at: www.segger.com
 
 We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
+Licensing information
+
+Licensor:                 SEGGER Software GmbH
+Licensed to:              STMicroelectronics International NV
+Licensed SEGGER software: emWin
+License number:           GUI-00429
+License model:            Buyout SRC [Buyout Source Code License, signed November 29th 2012]
+Licensed product:         -
+Licensed platform:        STMs ARM Cortex-M based 32 BIT CPUs
+Licensed number of seats: -
+----------------------------------------------------------------------
 File        : GUIDEMO_Speed.c
 Purpose     : Speed demo
 ----------------------------------------------------------------------
 */
 
-/**
-  ******************************************************************************
-  * @file    GUIDEMO_Speed.c
-  * @author  MCD Application Team
-  * @version V1.4.2
-  * @date    13-November-2015
-  * @brief   Speed demo
-  ******************************************************************************
-  * @attention
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
-
-#include <stdlib.h>  /* for rand */
-
 #include "GUIDEMO.h"
 
 #if (SHOW_GUIDEMO_SPEED)
+
+#include <stdlib.h>  // rand()
 
 /*********************************************************************
 *
@@ -71,13 +55,13 @@ Purpose     : Speed demo
 **********************************************************************
 */
 static const GUI_COLOR _aColor[8] = {
-  0x000000, 
-  0x0000FF, 
-  0x00FF00, 
-  0x00FFFF, 
-  0xFF0000, 
-  0xFF00FF, 
-  0xFFFF00, 
+  0x000000,
+  0x0000FF,
+  0x00FF00,
+  0x00FFFF,
+  0xFF0000,
+  0xFF00FF,
+  0xFFFF00,
   0xFFFFFF
 };
 
@@ -92,10 +76,19 @@ static const GUI_COLOR _aColor[8] = {
 *       _GetPixelsPerSecond
 */
 static U32 _GetPixelsPerSecond(void) {
-  GUI_COLOR Color, BkColor;
-  U32 x0, y0, x1, y1, xSize, ySize;
-  I32 t, t0;
-  U32 Cnt, PixelsPerSecond, PixelCnt;
+  GUI_COLOR BkColor;
+  GUI_COLOR Color;
+  I32       PixelsPerSecond;
+  I32       PixelCnt;
+  I32       t0;
+  I32       t;
+  U32       xSize;
+  U32       ySize;
+  U32       Cnt;
+  U32       x0;
+  U32       x1;
+  U32       y0;
+  U32       y1;
 
   //
   // Find an area which is not obstructed by any windows
@@ -117,14 +110,14 @@ static U32 _GetPixelsPerSecond(void) {
   do {
     GUI_FillRect(x0, y0, x1, y1);
     Cnt++;
-    t = GUIDEMO_GetTime();    
+    t = GUIDEMO_GetTime();
   } while ((t - (t0 + 100)) <= 0);
   //
   // Compute result
   //
   t -= t0;
   PixelCnt = (x1 - x0 + 1) * (y1 - y0 + 1) * Cnt;
-  PixelsPerSecond = PixelCnt / t * 1000;   
+  PixelsPerSecond = PixelCnt / t * 1000;
   GUI_SetColor(Color);
   return PixelsPerSecond;
 }
@@ -140,19 +133,24 @@ static U32 _GetPixelsPerSecond(void) {
 *       GUIDEMO_Speed
 */
 void GUIDEMO_Speed(void) {
-  int      TimeStart, i;
-  U32      PixelsPerSecond;
-  unsigned aColorIndex[8];
-  int      xSize, ySize, vySize;
-  GUI_RECT Rect, ClipRect;
-  char     cText[40] = { 0 };
+  #if GUI_SUPPORT_TOUCH
+    GUI_PID_STATE State;
+  #endif
+  GUI_RECT        ClipRect;
+  GUI_RECT        Rect;
+  char            acText[40] = { 0 };
+  U32             PixelsPerSecond;
+  int             aColorIndex[8];
+  int             TimeStart;
+  int             vySize;
+  int             xSize;
+  int             ySize;
+  int             i;
 
+  GUIDEMO_ConfigureDemo("High speed", "Multi layer clipping\nHighly optimized drivers", 0);
   xSize  = LCD_GetXSize();
   ySize  = LCD_GetYSize();
   vySize = LCD_GetVYSize();
-#if GUI_SUPPORT_CURSOR
-  GUI_CURSOR_Hide();
-#endif
   if (vySize > ySize) {
     ClipRect.x0 = 0;
     ClipRect.y0 = 0;
@@ -160,12 +158,9 @@ void GUIDEMO_Speed(void) {
     ClipRect.y1 = ySize;
     GUI_SetClipRect(&ClipRect);
   }
-  GUIDEMO_ShowIntro("High speed",
-                    "Multi layer clipping\n"
-                    "Highly optimized drivers");
   for (i = 0; i< 8; i++) {
     aColorIndex[i] = GUI_Color2Index(_aColor[i]);
-  }  
+  }
   TimeStart = GUIDEMO_GetTime();
   for (i = 0; ((GUIDEMO_GetTime() - TimeStart) < 5000) && (GUIDEMO_CheckCancel() == 0); i++) {
     GUI_SetColorIndex(aColorIndex[i&7]);
@@ -192,32 +187,35 @@ void GUIDEMO_Speed(void) {
     if (Rect.y1 < 0) {
       Rect.y1 = 0;
     }
-    GUI_Exec();
     //
-    // Allow short breaks so we do not use all available CPU time ...
+    // There is no control window. A simple click on any position has to skip the demo.
     //
+    #if GUI_SUPPORT_TOUCH
+      GUI_PID_GetState(&State);
+      if (State.Pressed) {
+        break;
+      }
+    #endif
   }
   GUIDEMO_NotifyStartNext();
   PixelsPerSecond = _GetPixelsPerSecond();
   GUI_SetClipRect(NULL);
-  GUIDEMO_DrawBk(0);
+  GUIDEMO_AddStringToString(acText, "Pixels/sec: ");
+  GUIDEMO_AddIntToString(acText, PixelsPerSecond);
+  GUIDEMO_DrawBk();
   GUI_SetColor(GUI_WHITE);
   GUI_SetTextMode(GUI_TM_TRANS);
   GUI_SetFont(&GUI_FontRounded22);
-  GUI_DrawBitmap(&bmSTLogo70x35, 5, 5);
-  GUIDEMO_AddStringToString(cText, "Pixels/sec: ");
-  GUIDEMO_AddIntToString(cText, PixelsPerSecond);
-  GUI_DispStringHCenterAt(cText, xSize >> 1, (ySize - GUI_GetFontSizeY()) >> 1);
+  GUI_DispStringHCenterAt(acText, xSize / 2, (ySize - GUI_GetFontSizeY()) / 2);
+  GUIDEMO_ConfigureDemo(NULL, NULL, GUIDEMO_SHOW_CURSOR | GUIDEMO_SHOW_CONTROL);
   GUIDEMO_Delay(4000);
-#if GUI_SUPPORT_CURSOR
-  GUI_CURSOR_Show();
-#endif
 }
 
 #else
 
-void GUIDEMO_Speed(void) {}
+void GUIDEMO_Speed_C(void);
+void GUIDEMO_Speed_C(void) {}
 
-#endif
+#endif  // SHOW_GUIDEMO_SPEED
 
 /*************************** End of file ****************************/

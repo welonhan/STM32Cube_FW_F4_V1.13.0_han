@@ -1,6 +1,5 @@
 /*********************************************************************
-*          Portions COPYRIGHT 2015 STMicroelectronics                *
-*          Portions SEGGER Microcontroller GmbH & Co. KG             *
+*                SEGGER Microcontroller GmbH & Co. KG                *
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
@@ -10,7 +9,7 @@
 *                                                                    *
 **********************************************************************
 
-** emWin V5.28 - Graphical user interface for embedded applications **
+** emWin V5.32 - Graphical user interface for embedded applications **
 All  Intellectual Property rights  in the Software belongs to  SEGGER.
 emWin is protected by  international copyright laws.  Knowledge of the
 source code may not be used to write a similar product.  This file may
@@ -27,36 +26,21 @@ Full source code is available at: www.segger.com
 
 We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
+Licensing information
+
+Licensor:                 SEGGER Software GmbH
+Licensed to:              STMicroelectronics International NV
+Licensed SEGGER software: emWin
+License number:           GUI-00429
+License model:            Buyout SRC [Buyout Source Code License, signed November 29th 2012]
+Licensed product:         -
+Licensed platform:        STMs ARM Cortex-M based 32 BIT CPUs
+Licensed number of seats: -
+----------------------------------------------------------------------
 File        : MOTION_RadialMenu.c
 Purpose     : Shows how to create a radial menu with motion support
 ----------------------------------------------------------------------
 */
-
-/**
-  ******************************************************************************
-  * @file    MOTION_RadialMenu.c
-  * @author  MCD Application Team
-  * @version V1.4.2
-  * @date    13-November-2015
-  * @brief   Shows how to create a radial menu with motion support
-  ******************************************************************************
-  * @attention
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
 
 /*********************************************************************
 *
@@ -67,6 +51,17 @@ Purpose     : Shows how to create a radial menu with motion support
 #include "GUIDEMO.h"
 
 #if (SHOW_GUIDEMO_RADIALMENU && GUI_WINSUPPORT)
+
+#define YSIZE_EXPLANATION 30
+#define FONT_EXPLANATION  GUI_FONT_13_ASCII  // Make sure to change YSIZE_EXPLANATION according to the used font.
+#define XSIZE_MAX         600
+#define YSIZE_MAX         320
+
+#define LIMIT_X(x)        (x > XSIZE_MAX ? XSIZE_MAX : x)
+#define LIMIT_Y(y)        (y > YSIZE_MAX ? YSIZE_MAX : y)
+
+#define DISP2WIN_X(x)     (x / 16 * 15);
+#define DISP2WIN_Y(y)     (y /  2);
 
 /*********************************************************************
 *
@@ -88,9 +83,14 @@ typedef struct {
 typedef struct {
   int                 Pos;
   int                 NumItems;
-  int                 xSizeItem, ySizeItem;
-  int                 xSizeWindow, ySizeWindow;
-  int                 rx, ry, mx, my;
+  int                 xSizeItem;
+  int                 ySizeItem;
+  int                 xSizeWin;
+  int                 ySizeWin;
+  int                 rx;
+  int                 ry;
+  int                 mx;
+  int                 my;
   int                 FinalMove;
   const BITMAP_ITEM * pBitmapItem;
   ITEM_INFO         * pItemInfo;
@@ -1750,9 +1750,8 @@ static GUI_CONST_STORAGE unsigned char _acRectRed_60x60[] = {
   /* RLE: 004 Pixels @ 009,059*/ 4, 0x33,
   /* ABS: 024 Pixels @ 013,059*/ 0, 24, 0x5D, 0x66, 0x66, 0x90, 0x99, 0xC0, 0xD2, 0xF9, 0xCC, 0xA2, 0x81, 0x66, 0x51, 0x33, 0x21, 0x0C, 0x33, 0x3C, 0x66, 0x6F, 0x99, 0xA8, 0xCC, 0xDE,
   /* RLE: 023 Pixels @ 037,059*/ 23, 0xFF,
-
-
-  0};  /* 968 bytes for 3600 pixels */
+  0
+};  /* 968 bytes for 3600 pixels */
 
 static GUI_CONST_STORAGE GUI_BITMAP _bmRectRed_60x60 = {
   60, /* XSize */
@@ -1780,6 +1779,9 @@ static const BITMAP_ITEM _aBitmapItem[] = {
   { &_bmRemoteRad,   "Select network"                     },
 };
 
+static int _xPosRect = 0;
+static int _yPosRect = 0;
+
 /*********************************************************************
 *
 *       Private routines
@@ -1790,7 +1792,7 @@ static const BITMAP_ITEM _aBitmapItem[] = {
 *
 *       _cbDraw
 *
-*  Function description:
+*  Function description
 *    Callback routine of radial menu
 */
 static void _cbDraw(WM_MESSAGE * pMsg) {
@@ -1812,14 +1814,14 @@ static void _cbDraw(WM_MESSAGE * pMsg) {
     // One time initialization of parameter structure
     //
     if (pPara->xSizeItem == 0) {
-      pPara->xSizeWindow = WM_GetWindowSizeX(hWin);
-      pPara->ySizeWindow = WM_GetWindowSizeY(hWin);
-      pPara->xSizeItem   = pPara->pBitmapItem[0].pBitmap->XSize;
-      pPara->ySizeItem   = pPara->pBitmapItem[0].pBitmap->YSize;
-      pPara->rx          = (pPara->xSizeWindow - pPara->xSizeItem) / 2;
-      pPara->ry          = (pPara->ySizeWindow - pPara->ySizeItem) / 2;
-      pPara->mx          = pPara->xSizeWindow / 2;
-      pPara->my          = pPara->ry + pPara->ySizeItem / 2;
+      pPara->xSizeWin  = WM_GetWindowSizeX(hWin);
+      pPara->ySizeWin  = WM_GetWindowSizeY(hWin) - YSIZE_EXPLANATION;
+      pPara->xSizeItem = pPara->pBitmapItem[0].pBitmap->XSize;
+      pPara->ySizeItem = pPara->pBitmapItem[0].pBitmap->YSize;
+      pPara->rx        = (pPara->xSizeWin - pPara->xSizeItem) / 2;
+      pPara->ry        = (pPara->ySizeWin - pPara->ySizeItem) / 2;
+      pPara->mx        = pPara->xSizeWin / 2;
+      pPara->my        = pPara->ry + pPara->ySizeItem / 2;
     }
     //
     // Calculate current positions of items
@@ -1830,8 +1832,8 @@ static void _cbDraw(WM_MESSAGE * pMsg) {
       SinHQ                     = GUI__SinHQ(a);
       CosHQ                     = GUI__CosHQ(a);
       pPara->pItemInfo[i].Index = i;
-      pPara->pItemInfo[i].xPos  = pPara->mx -  ((CosHQ * pPara->rx) >> 16);
-      pPara->pItemInfo[i].yPos  = pPara->my + (((SinHQ * pPara->ry) >> 16) * pPara->ry) / pPara->rx;
+      pPara->pItemInfo[i].xPos  = pPara->mx - (SHIFT_RIGHT_16(CosHQ * pPara->rx));
+      pPara->pItemInfo[i].yPos  = pPara->my + (SHIFT_RIGHT_16(SinHQ * pPara->ry));
     }
     //
     // Bubble sort items to be able to draw background items first
@@ -1854,27 +1856,30 @@ static void _cbDraw(WM_MESSAGE * pMsg) {
       GUI_DrawBitmap((pPara->pBitmapItem + pPara->pItemInfo[i].Index)->pBitmap, pPara->pItemInfo[i].xPos - pPara->xSizeItem / 2, pPara->pItemInfo[i].yPos - pPara->ySizeItem / 2);
     }
     //
+    // Determine the position to draw the frame and the explanation at
+    //
+    if ((_xPosRect == 0) || (_yPosRect == 0)) {
+      for (i = 0; i < pPara->NumItems; i++) {
+        if (pPara->pItemInfo[i].yPos > _yPosRect) {
+          _xPosRect = pPara->pItemInfo[i].xPos;
+          _yPosRect = pPara->pItemInfo[i].yPos;
+        }
+      }
+    }
+    //
     // Draw item text only after final move
     //
     if (pPara->FinalMove) {
       GUI_SetColor(GUI_WHITE);
       GUI_SetTextMode(GUI_TM_TRANS);
-      GUI_SetFont(GUI_FONT_13_ASCII);
-#ifdef USE_MB1063
-      GUI_DispStringHCenterAt((pPara->pBitmapItem + pPara->pItemInfo[pPara->NumItems - 1].Index)->pExplanation, 300, 305);
-#else
-      GUI_DispStringHCenterAt((pPara->pBitmapItem + pPara->pItemInfo[pPara->NumItems - 1].Index)->pExplanation, 226, 168);
-#endif
+      GUI_SetFont(FONT_EXPLANATION);
+      GUI_DispStringHCenterAt((pPara->pBitmapItem + pPara->pItemInfo[pPara->NumItems - 1].Index)->pExplanation, _xPosRect, _yPosRect + _bmRectRed_60x60.YSize * 2 / 3);
     }
     //
     // Draw frame surround the current item
     //
     GUI_SetColor(GUI_RED);
-#ifdef USE_MB1063
-    GUI_DrawBitmap(&_bmRectRed_60x60, 270, 240);
-#else
-    GUI_DrawBitmap(&_bmRectRed_60x60, 196, 103);
-#endif
+    GUI_DrawBitmap(&_bmRectRed_60x60, _xPosRect - _bmRectRed_60x60.XSize / 2, _yPosRect - _bmRectRed_60x60.YSize / 2);
     break;
   }
 }
@@ -1923,25 +1928,6 @@ static void _cbMotion(WM_MESSAGE * pMsg) {
 
 /*********************************************************************
 *
-*       _Delay
-*
-*  Function description:
-*    Delay function which returns 1 immediately if automatic animation is off
-*/
-static int _Delay(int ms) {
-  int TimeNow, TimeEnd;
-
-  TimeNow = GUI_GetTime();
-  TimeEnd = TimeNow + ms;
-  do {
-    GUI_Delay(500);
-    TimeNow = GUI_GetTime();
-  } while (TimeNow < TimeEnd);
-  return GUIDEMO_CheckCancel();
-}
-
-/*********************************************************************
-*
 *       _RadialMenu
 *
 *  Function description:
@@ -1953,10 +1939,20 @@ static void _RadialMenu(void) {
   WM_HWIN            hMotion;
   WM_HWIN            hDraw;
   PARA             * pPara;
-  int                xSizeWindow;
-  int                ySizeWindow;
+  int                xSizeWin;
+  int                ySizeWin;
+  int                xSize;
+  int                ySize;
+  int                xPos;
+  int                yPos;
   int                i;
 
+  GUIDEMO_DrawBk();
+  GUIDEMO_DispTitle("Radial Menu");
+  #if (GUI_SUPPORT_MEMDEV == 0)
+    GUI_SetColor(GUI_YELLOW);
+    GUIDEMO_DispHint("Use Memory Devices\nto avoid flickering.");
+  #endif
   //
   // Initialize parameter structure for items to be shown
   //
@@ -1968,13 +1964,17 @@ static void _RadialMenu(void) {
   //
   // Create radial menu window
   //
-  xSizeWindow        = LCD_GetXSize() / 16 * 15;
-  ySizeWindow        = LCD_GetYSize() /  4 *  3;
-  hDraw              = WM_CreateWindowAsChild(10, 20, xSizeWindow, ySizeWindow, WM_HBKWIN, WM_CF_SHOW | WM_CF_HASTRANS, _cbDraw, sizeof(pPara));
+  xSize    = LCD_GetXSize();
+  ySize    = LCD_GetYSize();
+  xSizeWin = DISP2WIN_X(LIMIT_X(xSize));
+  ySizeWin = DISP2WIN_Y(LIMIT_Y(ySize));
+  xPos     = (xSize - xSizeWin) / 2;
+  yPos     = (ySize - ySizeWin) / 2;
+  hDraw    = WM_CreateWindowAsChild(xPos, yPos, xSizeWin, ySizeWin, WM_HBKWIN, WM_CF_SHOW | WM_CF_HASTRANS, _cbDraw, sizeof(pPara));
   //
   // Create transparent window which receives the motion messages
   //
-  hMotion            = WM_CreateWindowAsChild(0, ySizeWindow / 2, xSizeWindow, ySizeWindow / 2, hDraw, WM_CF_SHOW | WM_CF_HASTRANS, _cbMotion, sizeof(pPara));
+  hMotion  = WM_CreateWindowAsChild(0, ySizeWin / 2, xSizeWin, ySizeWin / 2, hDraw, WM_CF_SHOW | WM_CF_HASTRANS, _cbMotion, sizeof(pPara));
   //
   // Add pointer to parameter structure to windows
   //
@@ -1989,22 +1989,20 @@ static void _RadialMenu(void) {
   //
   // Turn left (motion)
   //
-#ifdef __ICCARM__
   WM_MOTION_SetMotion(hMotion, GUI_COORD_X, 200, 200);
-  if (_Delay(2000)) {
+  if (GUIDEMO_CheckCancelDelay(2000)) {
     WM_DeleteWindow(hMotion);
     WM_DeleteWindow(hDraw);
     return;
   }
   WM_MOTION_SetMotion(hMotion, GUI_COORD_X, 800, 800);
-  if (_Delay(2000)) {
+  if (GUIDEMO_CheckCancelDelay(2000)) {
     WM_DeleteWindow(hMotion);
     WM_DeleteWindow(hDraw);
     return;
   }
   WM_MOTION_SetMotion(hMotion, GUI_COORD_X, 2000, 2000);
-#endif
-  if (_Delay(2000)) {
+  if (GUIDEMO_CheckCancelDelay(2000)) {
     WM_DeleteWindow(hMotion);
     WM_DeleteWindow(hDraw);
     return;
@@ -2012,22 +2010,20 @@ static void _RadialMenu(void) {
   //
   // Turn right (motion)
   //
-#ifdef __ICCARM__
   WM_MOTION_SetMotion(hMotion, GUI_COORD_X, -200, 200);
-  if (_Delay(2000)) {
+  if (GUIDEMO_CheckCancelDelay(2000)) {
     WM_DeleteWindow(hMotion);
     WM_DeleteWindow(hDraw);
     return;
   }
   WM_MOTION_SetMotion(hMotion, GUI_COORD_X, -800, 800);
-  if (_Delay(2000)) {
+  if (GUIDEMO_CheckCancelDelay(2000)) {
     WM_DeleteWindow(hMotion);
     WM_DeleteWindow(hDraw);
     return;
   }
   WM_MOTION_SetMotion(hMotion, GUI_COORD_X, -2000, 2000);
-#endif
-  if (_Delay(2000)) {
+  if (GUIDEMO_CheckCancelDelay(2000)) {
     WM_DeleteWindow(hMotion);
     WM_DeleteWindow(hDraw);
     return;
@@ -2037,7 +2033,7 @@ static void _RadialMenu(void) {
   //
   for (i = 0; i < 5; i++) {
     WM_MOTION_SetMovement(hMotion, GUI_COORD_X, 500, 100);
-    if (_Delay(500 *2)) {
+    if (GUIDEMO_CheckCancelDelay(500)) {
       WM_DeleteWindow(hMotion);
       WM_DeleteWindow(hDraw);
       return;
@@ -2058,16 +2054,17 @@ static void _RadialMenu(void) {
 *       MainTask
 */
 void GUIDEMO_RadialMenu(void) {
-  GUIDEMO_HideInfoWin();
-  GUIDEMO_ShowIntro("Radial Menu",
-                    "Selecting an icon from a radial menu.\n"
-                    "Changing the selection is done\n"
-                    "using STemWin motion support.");
+  GUIDEMO_ConfigureDemo("Radial Menu", "Selecting an icon from a radial menu.\nChanging the selection is done\nusing STemWin motion support.", GUIDEMO_SHOW_CURSOR | GUIDEMO_SHOW_CONTROL);
   WM_MOTION_Enable(1);
   _RadialMenu();
   WM_MOTION_Enable(0);
 }
 
-#endif  // (SHOW_GUIDEMO_RADIALMENU)
+#else
+
+void GUIDEMO_RadialMenu_C(void);
+void GUIDEMO_RadialMenu_C(void) {}
+
+#endif  // SHOW_GUIDEMO_RADIALMENU && GUI_WINSUPPORT
 
 /*************************** End of file ****************************/

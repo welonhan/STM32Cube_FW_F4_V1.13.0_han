@@ -113,9 +113,16 @@ uint8_t BSP_TOUCH_Read(TOUCH_XY_Typedef CTP_Dat)
 	{
 		if ((tp_data[2]&0x0f) == 1)
 		{
-			TOUCH_Dat.y = ((uint16_t)(tp_data[3] )& 0x0F)<<8 | (uint16_t)(tp_data[4]);
-			TOUCH_Dat.x = 800-(((uint16_t)(tp_data[5] )& 0x0F)<<8 | (uint16_t)(tp_data[6]));
+			TOUCH_Dat.y = 480-(((uint16_t)(tp_data[3] )& 0x0F)<<8 | (uint16_t)(tp_data[4]));
+			TOUCH_Dat.x = (((uint16_t)(tp_data[5] )& 0x0F)<<8 | (uint16_t)(tp_data[6]));
+			TOUCH_Dat.pressed=1;
 			return 0;
+		}
+		else
+		{
+			//TOUCH_Dat.y = ((uint16_t)(tp_data[3] )& 0x0F)<<8 | (uint16_t)(tp_data[4]);
+			//TOUCH_Dat.x = 800-(((uint16_t)(tp_data[5] )& 0x0F)<<8 | (uint16_t)(tp_data[6]));
+			TOUCH_Dat.pressed=0;
 		}
 	}
 	return 1;

@@ -32,11 +32,14 @@
 #define Bank1_LCD_D    ((uint32_t)0x60200000)    //Disp Data ADDR, A20 set to 1
 #define Bank1_LCD_C    ((uint32_t)0x60000000)	   //Disp Reg ADDR
 
-void BSP_LCD_Init(void);
-void BSP_LCD_DrawPixel(uint16_t x, uint16_t y, int Color);
-void LCD_BACKLIGHT_PWM_Init(void);
-void LCD_BACKLIGHT_PWM_50duty(void);
-void LCD_BACKLIGHT_PWM_25duty(void);
+void 			BSP_LCD_Init(void);
+void 			BSP_LCD_DrawPixel(uint16_t x, uint16_t y, int Color);
+uint16_t 	BSP_LCD_GetPoint(uint16_t x,uint16_t y);
+void 			BSP_LCD_FillRec(uint16_t xStart,uint16_t yStart,uint16_t xEnd,uint16_t yEnd,uint16_t Color);
+void 			BSP_LCD_FillPic(uint16_t x, uint16_t y,uint16_t pic_H, uint16_t pic_V, uint16_t* pic);
+void 			LCD_BACKLIGHT_PWM_Init(void);
+void 			LCD_BACKLIGHT_PWM_50duty(void);
+void 			LCD_BACKLIGHT_PWM_25duty(void);
 
 #endif
 
